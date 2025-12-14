@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <!-- =======================================================
+       STAYMAIS - PORTFÓLIO CONFIG (edite aqui)
+       - Categorias (chips): capivari / alto-da-boa-vista / vila-inglesa
+       - Para adicionar imóvel: copie um <article class="prop"> e ajuste:
+         data-name / data-city / data-area / imagem / link
+       Logo: logo.png na mesma pasta
+       ======================================================= -->
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>StayMais | Portfólio</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="nav-inner">
+    <a class="brand" href="index.html#inicio">
+      <img src="logo.png" alt="StayMais">
+      <span>staymais</span>
+    </a>
+
+    <button id="burger" class="burger" aria-label="Abrir menu" aria-expanded="false">☰ Menu</button>
+
+    <div id="navLinks" class="links">
+      <a href="index.html#inicio">Home</a>
+      <a class="cta" href="formulario.html">Avaliar meu imóvel</a>
+    </div>
+  </div>
+</nav>
+
+<a id="whatsFloat" class="whats-float" target="_blank" href="https://wa.me/5535999260177">WhatsApp</a>
+
+<section class="container reveal">
+  <h1 class="hero" style="font-size:36px;">Portfólio</h1>
+  <p class="sub">
+    Hospedagens administradas pela StayMais. Operação principal em <strong>Campos do Jordão</strong> com padrão impecável —
+    e processo replicável para expansão.
+  </p>
+
+  <div class="toolbar">
+    <input id="propSearch" class="search" type="text" placeholder="Buscar por nome, cidade ou região...">
+    <div class="filters">
+      <button class="chip active" data-filter="todos">Todos</button>
+      <button class="chip" data-filter="capivari">Capivari</button>
+      <button class="chip" data-filter="alto-da-boa-vista">Alto da Boa Vista</button>
+      <button class="chip" data-filter="vila-inglesa">Vila Inglesa</button>
+    </div>
+  </div>
+
+  <div class="properties">
+    <!-- Imóvel 1 -->
+    <article class="prop reveal" data-name="Imóvel 1" data-city="Campos do Jordão" data-area="capivari">
+      <div class="prop-img" style="background-image:url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=60');"></div>
+      <div class="prop-body">
+        <h3 class="prop-title">Imóvel 1 <span class="badge-mini">Airbnb</span></h3>
+        <p class="prop-meta">Campos do Jordão • Capivari</p>
+        <div class="prop-actions">
+          <a class="btn" target="_blank" href="https://www.airbnb.com.br/rooms/1489778972017530668">Ver anúncio</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Imóvel 2 -->
+    <article class="prop reveal" data-name="Imóvel 2" data-city="Campos do Jordão" data-area="alto-da-boa-vista">
+      <div class="prop-img" style="background-image:url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=60');"></div>
+      <div class="prop-body">
+        <h3 class="prop-title">Imóvel 2 <span class="badge-mini">Airbnb</span></h3>
+        <p class="prop-meta">Campos do Jordão • Alto da Boa Vista</p>
+        <div class="prop-actions">
+          <a class="btn" target="_blank" href="https://www.airbnb.com.br/rooms/1366703907415936831">Ver anúncio</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Imóvel 3 -->
+    <article class="prop reveal" data-name="Imóvel 3" data-city="Campos do Jordão" data-area="vila-inglesa">
+      <div class="prop-img" style="background-image:url('https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1200&q=60');"></div>
+      <div class="prop-body">
+        <h3 class="prop-title">Imóvel 3 <span class="badge-mini">Airbnb</span></h3>
+        <p class="prop-meta">Campos do Jordão • Vila Inglesa</p>
+        <div class="prop-actions">
+          <a class="btn" target="_blank" href="https://www.airbnb.com.br/rooms/1441574411572251909">Ver anúncio</a>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="cta-box" style="margin-top:22px;">
+    <h2 class="title" style="margin-bottom:8px;">Quer entrar no portfólio?</h2>
+    <p class="sub" style="margin-bottom:16px;">Preencha o formulário e a gente retorna com a avaliação inicial.</p>
+    <a class="btn orange" href="formulario.html">Avaliar meu imóvel</a>
+  </div>
+</section>
+
+<div class="footer">© StayMais — Gestão de Hospedagens</div>
+<script src="script.js"></script>
+</body>
+</html>

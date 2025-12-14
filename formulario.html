@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <!-- =======================================================
+       STAYMAIS - CONFIG (edite aqui)
+       - Logo: arquivo logo.png na mesma pasta
+       ======================================================= -->
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>StayMais | Avaliação do Imóvel</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="nav-inner">
+    <a class="brand" href="index.html#inicio">
+      <img src="logo.png" alt="StayMais">
+      <span>staymais</span>
+    </a>
+
+    <button id="burger" class="burger" aria-label="Abrir menu" aria-expanded="false">☰ Menu</button>
+
+    <div id="navLinks" class="links">
+      <a href="index.html#servicos">Serviços</a>
+      <a href="portfolio.html">Portfólio</a>
+      <a class="cta" href="index.html#proprietarios">Voltar</a>
+    </div>
+  </div>
+</nav>
+
+<a id="whatsFloat" class="whats-float" target="_blank" href="https://wa.me/5535999260177">WhatsApp</a>
+
+<section class="container reveal">
+  <h1 class="hero" style="font-size:36px;">Avaliação do imóvel</h1>
+  <p class="sub">Preencha em 1 minuto. Enviaremos retorno por WhatsApp e também por e-mail.</p>
+
+  <div class="form-card">
+    <form id="leadForm"
+          action="https://formsubmit.co/staymaisreservas@gmail.com"
+          method="POST"
+          autocomplete="on">
+
+      <input type="hidden" name="_subject" value="Novo lead - Avaliação de Imóvel (StayMais)">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="endform.html">
+
+      <div class="form-grid">
+        <input class="input" name="Nome" placeholder="Seu nome" required>
+        <input class="input" name="WhatsApp" placeholder="Seu WhatsApp (com DDD)" required>
+      </div>
+
+      <div class="form-grid">
+        <input class="input" name="Cidade" placeholder="Cidade do imóvel" required>
+        <input class="input" name="Bairro" placeholder="Bairro (opcional)">
+      </div>
+
+      <div class="form-grid">
+        <select class="input" name="Tipo" required>
+          <option value="" selected disabled>Tipo de imóvel</option>
+          <option>Apartamento / Flat</option>
+          <option>Casa</option>
+          <option>Chalé</option>
+          <option>Pousada / Suítes</option>
+          <option>Outro</option>
+        </select>
+
+        <select class="input" name="Quartos" required>
+          <option value="" selected disabled>Quartos</option>
+          <option>Studio</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4+</option>
+        </select>
+      </div>
+
+      <div class="form-grid">
+        <select class="input" name="Status no Airbnb" required>
+          <option value="" selected disabled>Status no Airbnb</option>
+          <option>Já anuncio no Airbnb/Booking</option>
+          <option>Ainda não anuncio (quero começar)</option>
+        </select>
+        <input class="input" name="Link do anúncio" placeholder="Link do anúncio (se já existir)">
+      </div>
+
+      <textarea class="input" name="Observações" rows="4"
+        placeholder="Observações (ex: lareira, vista, garagem, regras do condomínio...)"></textarea>
+
+      <button class="btn orange" type="submit">Enviar avaliação</button>
+
+      <p class="small" style="margin-top:10px;">
+        Operação principal em Campos do Jordão com padrão impecável — e processo replicável para expansão.
+      </p>
+      <div id="leadMsg" class="small" style="margin-top:8px;"></div>
+    </form>
+  </div>
+</section>
+
+<div class="footer">© StayMais — Gestão de Hospedagens</div>
+<script src="script.js"></script>
+</body>
+</html>
