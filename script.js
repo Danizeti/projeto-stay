@@ -138,8 +138,11 @@ const $$ = (sel) => document.querySelectorAll(sel);
   const msgEl = $("#leadMsg");
   if (!form) return;
 
-  form.addEventListener("submit", (e) => {
-    // 1) abre WhatsApp com mensagem formal
+  form.addEventListener("submit", () => {
+    // GARANTIA: sempre POST no FormSubmit
+    form.setAttribute("method", "POST");
+    form.setAttribute("action", "https://formsubmit.co/staymaisreservas@gmail.com");
+
     if (SITE_CONFIG.enableLeadFormWhatsappAfterEmail) {
       const fd = new FormData(form);
 
@@ -171,13 +174,8 @@ Gostaria de solicitar uma avaliação do meu imóvel para gestão com a StayMais
 Fico à disposição para encaminhar mais informações e fotos, se necessário.
 Obrigado(a)!`;
 
-      // abre em nova aba (mais confiável)
       window.open(`https://wa.me/${SITE_CONFIG.whatsappNumber}?text=${encodeURIComponent(waMsg)}`, "_blank");
       if (msgEl) msgEl.textContent = "Enviando por e-mail e abrindo WhatsApp com a mensagem pronta…";
     }
-
-    // 2) deixa o form seguir o fluxo normal (FormSubmit) => envia e-mail
-    // NÃO usar preventDefault aqui. Assim o e-mail vai.
-
   });
 })();
