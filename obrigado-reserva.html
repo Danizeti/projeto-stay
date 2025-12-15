@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reserva recebida — StayMais</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="nav-inner">
+      <a class="brand" href="index.html">
+        <span>StayMais</span>
+      </a>
+
+      <div class="links">
+        <a href="portfolio.html">Imóveis</a>
+        <a class="cta" href="index.html#contato">Falar com a gente</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="panel reveal show" style="max-width:820px;margin:0 auto;">
+      <h2 class="title" style="margin-bottom:8px;">Pedido de reserva recebido ✅</h2>
+      <p class="sub" style="margin-bottom:14px;">
+        Obrigado pelo contato! Recebemos suas datas e quantidade de hóspedes.
+        Agora vamos checar disponibilidade e te chamar no WhatsApp pra confirmar.
+      </p>
+
+      <div class="split" style="margin-top:18px;">
+        <div class="panel" style="box-shadow:none;">
+          <h3 style="margin:0 0 8px;color:var(--brand);">Próximos passos</h3>
+          <ul class="list">
+            <li>Validar disponibilidade do imóvel</li>
+            <li>Confirmar valores e regras</li>
+            <li>Enviar condições e link/forma de pagamento</li>
+          </ul>
+        </div>
+
+        <div class="panel" style="box-shadow:none;">
+          <h3 style="margin:0 0 8px;color:var(--brand);">Quer agilizar?</h3>
+          <p class="small" style="margin:0 0 10px;">
+            Clique abaixo e já manda a mensagem pronta no WhatsApp.
+          </p>
+
+          <a class="btn orange" id="ctaZap" href="#" target="_blank" rel="noopener">
+            Chamar no WhatsApp
+          </a>
+
+          <div class="small" style="margin-top:10px;">
+            Você não será cobrado agora — a confirmação é feita por WhatsApp.
+          </div>
+        </div>
+      </div>
+
+      <div class="divider" style="margin:24px 0;"></div>
+
+      <a class="btn" href="portfolio.html">Ver outros imóveis</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    StayMais • Atendimento e reservas
+  </footer>
+
+  <script>
+    // pega parâmetros que você mandar na URL (opcional)
+    const params = new URLSearchParams(location.search);
+    const name = params.get("name") || "";
+    const imovel = params.get("imovel") || "";
+    const checkin = params.get("checkin") || "";
+    const checkout = params.get("checkout") || "";
+    const hospedes = params.get("hospedes") || "";
+
+    const msg =
+`Olá! Acabei de enviar um pedido de reserva no site.
+${imovel ? "Imóvel: " + imovel + "\n" : ""}${name ? "Nome: " + name + "\n" : ""}${checkin ? "Check-in: " + checkin + "\n" : ""}${checkout ? "Check-out: " + checkout + "\n" : ""}${hospedes ? "Hóspedes: " + hospedes + "\n" : ""}Pode confirmar a disponibilidade, por favor?`;
+
+    // troca pelo seu número
+    const phone = "5511999999999";
+    document.getElementById("ctaZap").href =
+      `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  </script>
+</body>
+</html>
