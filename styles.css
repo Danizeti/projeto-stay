@@ -608,3 +608,247 @@ textarea.input{ resize:vertical; }
   text-align:center;
   color: color-mix(in srgb, var(--muted) 98%, var(--text));
 }
+/* =========================================================
+   19) PORTFÓLIO - GALERIA (slider leve, sem libs)
+   ========================================================= */
+
+/* Área da galeria (card do imóvel e página de reserva) */
+.gallery{
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 95%, transparent);
+  background: color-mix(in srgb, var(--surface) 95%, transparent);
+}
+
+/* Track que “anda” lateralmente */
+.gallery-track{
+  display:flex;
+  transition: transform .5s var(--ease);
+  will-change: transform;
+}
+
+/* Slide (imagem) */
+.gallery-slide{
+  min-width: 100%;
+  position: relative;
+}
+
+.gallery-slide img{
+  width:100%;
+  height: 190px;            /* padrão nos cards */
+  object-fit: cover;
+  display:block;
+
+  /* Hover zoom sutil (sem travar) */
+  transform: scale(1);
+  transition: transform .5s var(--ease);
+}
+
+/* Zoom só quando passa o mouse no card (desktop) */
+.prop:hover .gallery-slide img{
+  transform: scale(1.03);
+}
+
+/* Botões prev/next */
+.gallery-btn{
+  position:absolute;
+  top:50%;
+  transform: translateY(-50%);
+  border:0;
+  width:38px;
+  height:38px;
+  border-radius:999px;
+  cursor:pointer;
+  font-weight:950;
+
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 95%, transparent);
+  box-shadow: var(--shadow);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  transition: transform .25s var(--ease), background .25s var(--ease);
+}
+.gallery-btn:hover{ transform: translateY(-50%) scale(1.06); background: var(--hover); }
+.gallery-btn.prev{ left:10px; }
+.gallery-btn.next{ right:10px; }
+
+/* Bolinhas (indicador) */
+.gallery-dots{
+  position:absolute;
+  left:50%;
+  bottom:10px;
+  transform: translateX(-50%);
+  display:flex;
+  gap:6px;
+  padding:6px 8px;
+  border-radius:999px;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 90%, transparent);
+}
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background: color-mix(in srgb, var(--muted) 60%, transparent);
+  opacity:.65;
+}
+.dot.active{
+  background: var(--accent);
+  opacity:1;
+}
+
+/* =========================================================
+   20) BADGES DE DESTAQUE (Vista, Lareira, etc.)
+   ========================================================= */
+.badge-set{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:10px 0 8px;
+}
+
+.badge-mini{
+  font-size:12px;
+  font-weight:950;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid color-mix(in srgb, var(--border) 95%, transparent);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  color: var(--brand);
+}
+
+/* versão “destaque” (ex: Mais reservado) */
+.badge-mini.hot{
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  color: color-mix(in srgb, var(--accent) 65%, var(--text));
+}
+
+/* =========================================================
+   21) REGRAS DO IMÓVEL
+   ========================================================= */
+.rules{
+  margin-top:12px;
+  padding:12px;
+  border-radius: var(--radius-sm);
+  border:1px solid color-mix(in srgb, var(--border) 95%, transparent);
+  background: color-mix(in srgb, var(--surface) 95%, transparent);
+}
+
+.rules h4{
+  margin:0 0 8px;
+  color: var(--brand);
+  font-size:13px;
+  letter-spacing:-.1px;
+}
+
+.rules ul{
+  margin:0;
+  padding-left:16px;
+  color: color-mix(in srgb, var(--muted) 98%, var(--text));
+  font-weight:850;
+  font-size:13px;
+}
+.rules li{ margin:6px 0; }
+
+/* =========================================================
+   22) NOTA DISCRETA: RESERVA DIRETA (desconto/brinde)
+   ========================================================= */
+.book-hint{
+  margin-top:10px;
+  font-size:12px;
+  font-weight:900;
+  color: color-mix(in srgb, var(--muted) 98%, var(--text));
+  padding:10px 12px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--border));
+}
+
+/* =========================================================
+   23) PÁGINA DE RESERVA - “ESTILO AIRBNB” (simples)
+   ========================================================= */
+.reserve-wrap{
+  display:grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap:18px;
+  align-items:start;
+}
+@media (max-width: 980px){
+  .reserve-wrap{ grid-template-columns:1fr; }
+}
+
+/* Galeria maior na reserva */
+.reserve-gallery .gallery-slide img{
+  height: 330px;
+}
+@media (max-width: 980px){
+  .reserve-gallery .gallery-slide img{ height: 260px; }
+}
+
+/* Card do “form de reserva” parecido com o box do Airbnb */
+.reserve-card{
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border:1px solid color-mix(in srgb, var(--border) 95%, transparent);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding:16px;
+}
+
+/* Bloco checkin/checkout com “cara de Airbnb” */
+.datebox{
+  border:1px solid color-mix(in srgb, var(--input-border) 95%, transparent);
+  border-radius: 14px;
+  overflow:hidden;
+  background: var(--input-bg);
+}
+
+.date-row{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 560px){
+  .date-row{ grid-template-columns:1fr; }
+}
+
+.date-cell{
+  padding:10px 12px;
+  border-right:1px solid color-mix(in srgb, var(--input-border) 95%, transparent);
+}
+.date-cell:last-child{ border-right:0; }
+
+.date-label{
+  font-size:11px;
+  font-weight:950;
+  color: color-mix(in srgb, var(--muted) 98%, var(--text));
+  margin-bottom:6px;
+  letter-spacing:.4px;
+  text-transform: uppercase;
+}
+
+.date-input{
+  width:100%;
+  border:0;
+  background: transparent;
+  color: var(--text);
+  font-weight:900;
+  outline: none;
+}
+
+/* Campo hóspedes “linha de baixo” igual o exemplo */
+.guests-row{
+  padding:10px 12px;
+  border-top:1px solid color-mix(in srgb, var(--input-border) 95%, transparent);
+}
+
+/* Diárias */
+.nights{
+  margin:10px 0 12px;
+  font-weight:950;
+  color: var(--brand);
+}
+
+

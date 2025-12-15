@@ -3,14 +3,22 @@
 <head>
   <!-- =======================================================
        STAYMAIS | RESERVA
-       - Esta página capta dados básicos e abre o WhatsApp com mensagem pronta
-       - O nome do imóvel vem via URL: reserva.html?imovel=Nome
+       - Carrega imóvel via ?id=imovel1
+       - Mostra fotos + box de datas/diárias estilo Airbnb (simples)
        ======================================================= -->
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>StayMais | Reserva</title>
 
-  <!-- CSS principal -->
+  <title>StayMais | Reserva</title>
+  <meta name="description" content="Reserva direta com a StayMais. Solicite disponibilidade e valores via WhatsApp." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="StayMais | Reserva Direta"/>
+  <meta property="og:description" content="Reserve direto conosco e receba possível brinde ou desconto (conforme disponibilidade)."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="logo.png"/>
+  <meta property="og:locale" content="pt_BR"/>
+
   <link rel="stylesheet" href="styles.css"/>
   <link rel="preload" as="image" href="logo.png">
 </head>
@@ -29,73 +37,83 @@
     <button id="burger" class="burger" aria-label="Abrir menu" aria-expanded="false">☰ Menu</button>
 
     <div id="navLinks" class="links">
-      <a href="index.html#servicos">Serviços</a>
       <a href="portfolio.html">Portfólio</a>
-      <a class="cta" href="index.html#inicio">Início</a>
+      <a href="index.html#servicos">Serviços</a>
+      <a class="cta" href="formulario.html">Avaliar imóvel</a>
     </div>
   </div>
 </nav>
 
-<!-- Botão flutuante do WhatsApp -->
 <a id="whatsFloat" class="whats-float" target="_blank" href="https://wa.me/5535999260177">WhatsApp</a>
 
-<!-- =======================================================
-     CONTEÚDO PRINCIPAL
-     ======================================================= -->
 <section class="container reveal">
-  <h1 class="hero" style="font-size:38px;">Reserva via WhatsApp</h1>
-  <p class="sub">Preencha os dados básicos. Abriremos o WhatsApp com a mensagem pronta para você enviar.</p>
+  <!-- Título do imóvel (JS preenche) -->
+  <h1 id="reserveTitle" class="hero" style="font-size:40px;">Reserva</h1>
 
-  <div class="form-card">
+  <div class="reserve-wrap">
     <!-- =====================================================
-         FORM RESERVA
-         - Este form NÃO envia e-mail
-         - Ele abre o WhatsApp com os dados preenchidos
+         COLUNA ESQUERDA: GALERIA + HINT DISCRETO
+         (JS renderiza aqui)
          ===================================================== -->
-    <form id="reserveForm">
-      <div class="form-grid">
-        <input class="input" name="Imóvel" id="imovelField" placeholder="Nome do imóvel" required>
-        <input class="input" name="Nome" placeholder="Seu nome" required>
+    <div id="reserveGalleryHost" class="reveal"></div>
+
+    <!-- =====================================================
+         COLUNA DIREITA: CARD DO FORM (estilo Airbnb simples)
+         ===================================================== -->
+    <div class="reserve-card reveal">
+      <div class="nights" id="nightsCount">Selecione as datas</div>
+
+      <!-- “Caixa” de datas como no Airbnb (simples) -->
+      <div class="datebox">
+        <div class="date-row">
+          <div class="date-cell">
+            <div class="date-label">Check-in</div>
+            <input id="checkin" class="date-input" name="Check-in" type="date" form="reserveForm" required>
+          </div>
+
+          <div class="date-cell">
+            <div class="date-label">Check-out</div>
+            <input id="checkout" class="date-input" name="Check-out" type="date" form="reserveForm" required>
+          </div>
+        </div>
+
+        <div class="guests-row">
+          <div class="date-label">Hóspedes</div>
+          <select class="date-input" name="Hóspedes" form="reserveForm" required>
+            <option value="" selected disabled>Selecione</option>
+            <option>1 hóspede</option>
+            <option>2 hóspedes</option>
+            <option>3 hóspedes</option>
+            <option>4 hóspedes</option>
+            <option>5 hóspedes</option>
+            <option>6+ hóspedes</option>
+          </select>
+        </div>
       </div>
 
-      <div class="form-grid">
-        <input class="input" name="WhatsApp" placeholder="Seu WhatsApp (com DDD)" required>
-        <input class="input" name="Email" type="email" placeholder="Seu e-mail" required>
-      </div>
+      <!-- Form (sem campo de imóvel) -->
+      <form id="reserveForm" style="margin-top:12px;">
+        <div class="form-grid">
+          <input class="input" name="Nome" placeholder="Seu nome" required>
+          <input class="input" name="Telefone" placeholder="Seu WhatsApp (com DDD)" required>
+        </div>
 
-      <div class="form-grid">
-        <input class="input" name="Hóspedes" placeholder="Quantidade de hóspedes" required>
-        
-      </div>
+        <div class="form-grid">
+          <input class="input" name="Email" type="email" placeholder="Seu e-mail" required>
+          <input class="input" name="Telefone Secundário" placeholder="Telefone alternativo (opcional)">
+        </div>
 
-      <div class="form-grid">
-        <input class="input" name="Check-in" type="date" required>
-        <input class="input" name="Check-out" type="date" required>
-        
-      </div>
+        <button class="btn orange" type="submit" style="width:100%;">Reservar</button>
 
-      <textarea class="input" name="Observações" rows="4"
-        placeholder="Observações (ex: pet, horário de chegada, necessidade especial...)"></textarea>
-
-      <button class="btn orange" type="submit">Enviar pedido no WhatsApp</button>
-      <p class="small" style="margin-top:10px;">Você será direcionado para o WhatsApp com a mensagem pronta.</p>
-    </form>
+        <p class="small" style="margin-top:10px;">
+          Você não será cobrado agora — enviamos o pedido via WhatsApp para confirmar disponibilidade.
+        </p>
+      </form>
+    </div>
   </div>
 </section>
 
 <div class="footer">© StayMais — Gestão de Hospedagens</div>
-
-<!-- =======================================================
-     SCRIPT: preenche o campo “Imóvel” via URL (?imovel=...)
-     ======================================================= -->
-<script>
-  const params = new URLSearchParams(location.search);
-  const imovel = params.get("imovel");
-  const field = document.getElementById("imovelField");
-  if (imovel && field) field.value = imovel;
-</script>
-
-<!-- JS principal -->
 <script src="script.js"></script>
 </body>
 </html>

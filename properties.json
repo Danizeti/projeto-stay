@@ -1,0 +1,77 @@
+{
+  "imovel1": {
+    "name": "Imóvel 1",
+    "city": "Campos do Jordão",
+    "area": "capivari",
+    "areaLabel": "Capivari",
+    "airbnbUrl": "https://www.airbnb.com.br/rooms/1489778972017530668",
+    "badges": [
+      { "text": "Mais reservado", "hot": true },
+      { "text": "Vista" },
+      { "text": "Conforto" }
+    ],
+    "rules": [
+      "Check-in: a combinar",
+      "Check-out: a combinar",
+      "Pet: consultar",
+      "Vaga: consultar",
+      "Silêncio: após 22h"
+    ],
+    "description": "Hospedagem com foco em conforto e praticidade, ideal para casais ou pequenas famílias.",
+    "photos": [
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1600&q=60"
+    ]
+  },
+  "imovel2": {
+    "name": "Imóvel 2",
+    "city": "Campos do Jordão",
+    "area": "alto-da-boa-vista",
+    "areaLabel": "Alto da Boa Vista",
+    "airbnbUrl": "https://www.airbnb.com.br/rooms/1366703907415936831",
+    "badges": [
+      { "text": "Lareira" },
+      { "text": "Família" },
+      { "text": "Tranquilo" }
+    ],
+    "rules": [
+      "Check-in: a combinar",
+      "Check-out: a combinar",
+      "Pet: não permitido",
+      "Vaga: 1 vaga",
+      "Sem festas"
+    ],
+    "description": "Ambiente espaçoso, com estrutura completa para estadias confortáveis em qualquer época do ano.",
+    "photos": [
+      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1600&q=60"
+    ]
+  },
+  "imovel3": {
+    "name": "Imóvel 3",
+    "city": "Campos do Jordão",
+    "area": "vila-inglesa",
+    "areaLabel": "Vila Inglesa",
+    "airbnbUrl": "https://www.airbnb.com.br/rooms/1441574411572251909",
+    "badges": [
+      { "text": "Casal" },
+      { "text": "Aconchegante" },
+      { "text": "Localização" }
+    ],
+    "rules": [
+      "Check-in: a combinar",
+      "Check-out: a combinar",
+      "Pet: consultar",
+      "Vaga: consultar",
+      "Proibido fumar"
+    ],
+    "description": "Opção perfeita para quem quer tranquilidade, conforto e fácil acesso às principais regiões.",
+    "photos": [
+      "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1600&q=60"
+    ]
+  }
+}
