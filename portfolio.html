@@ -3,15 +3,14 @@
 <head>
   <!-- =======================================================
        STAYMAIS - PORTFÓLIO CONFIG (edite aqui)
-       - Categorias (chips): capivari / alto-da-boa-vista / vila-inglesa
-       - Para adicionar imóvel: copie um <article class="prop"> e ajuste:
-         data-name / data-city / data-area / imagem / link
-       Logo: logo.png na mesma pasta
+       - Para trocar nome/cidade/região/descrição: edite os cards abaixo
+       - Avaliações (futuro): ver bloco comentado "REVIEWS"
        ======================================================= -->
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>StayMais | Portfólio</title>
   <link rel="stylesheet" href="styles.css"/>
+  <link rel="preload" as="image" href="logo.png">
 </head>
 <body>
 
@@ -25,7 +24,8 @@
     <button id="burger" class="burger" aria-label="Abrir menu" aria-expanded="false">☰ Menu</button>
 
     <div id="navLinks" class="links">
-      <a href="index.html#inicio">Home</a>
+      <a href="index.html#servicos">Serviços</a>
+      <a href="index.html#proprietarios">Proprietários</a>
       <a class="cta" href="formulario.html">Avaliar meu imóvel</a>
     </div>
   </div>
@@ -34,10 +34,9 @@
 <a id="whatsFloat" class="whats-float" target="_blank" href="https://wa.me/5535999260177">WhatsApp</a>
 
 <section class="container reveal">
-  <h1 class="hero" style="font-size:36px;">Portfólio</h1>
+  <h1 class="hero" style="font-size:40px;">Portfólio</h1>
   <p class="sub">
-    Hospedagens administradas pela StayMais. Operação principal em <strong>Campos do Jordão</strong> com padrão impecável —
-    e processo replicável para expansão.
+    Hospedagens administradas pela StayMais. Operação principal em <strong>Campos do Jordão</strong> com padrão impecável.
   </p>
 
   <div class="toolbar">
@@ -51,45 +50,85 @@
   </div>
 
   <div class="properties">
-    <!-- Imóvel 1 -->
+
+    <!-- ================== IMÓVEL 1 ================== -->
     <article class="prop reveal" data-name="Imóvel 1" data-city="Campos do Jordão" data-area="capivari">
-      <div class="prop-img" style="background-image:url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=60');"></div>
+      <img class="prop-img"
+           src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=60"
+           alt="Imóvel 1"
+           loading="lazy"
+           decoding="async">
       <div class="prop-body">
-        <h3 class="prop-title">Imóvel 1 <span class="badge-mini">Airbnb</span></h3>
+        <h3 class="prop-title">Imóvel 1</h3>
         <p class="prop-meta">Campos do Jordão • Capivari</p>
+        <p class="prop-desc">
+          Acomodação com foco em conforto e praticidade, ideal para casais ou pequenas famílias.
+        </p>
+
+        <!-- REVIEWS (quando o cliente liberar depoimentos, você cola aqui)
+        <div class="reviews">
+          <p class="small"><strong>★ 4,9</strong> (128 avaliações)</p>
+          <p class="small">"Lugar impecável e atendimento rápido!" — Ana</p>
+        </div>
+        -->
+
         <div class="prop-actions">
-          <a class="btn" target="_blank" href="https://www.airbnb.com.br/rooms/1489778972017530668">Ver anúncio</a>
+          <a class="btn" target="_blank" href="https://www.airbnb.com.br/rooms/1489778972017530668">Ver no Airbnb</a>
+          <a class="btn orange" href="reserva.html?imovel=Im%C3%B3vel%201">Reservar</a>
         </div>
       </div>
     </article>
 
-    <!-- Imóvel 2 -->
+    <!-- ================== IMÓVEL 2 ================== -->
     <article class="prop reveal" data-name="Imóvel 2" data-city="Campos do Jordão" data-area="alto-da-boa-vista">
-      <div class="prop-img" style="background-image:url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=60');"></div>
+      <img class="prop-img"
+           src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1400&q=60"
+           alt="Imóvel 2"
+           loading="lazy"
+           decoding="async">
       <div class="prop-body">
-        <h3 class="prop-title">Imóvel 2 <span class="badge-mini">Airbnb</span></h3>
+        <h3 class="prop-title">Imóvel 2</h3>
         <p class="prop-meta">Campos do Jordão • Alto da Boa Vista</p>
+        <p class="prop-desc">
+          Ambiente espaçoso, com estrutura completa para estadias confortáveis em qualquer época do ano.
+        </p>
+
+        <!-- REVIEWS (futuro) -->
+
         <div class="prop-actions">
-          <a class="btn" target="_blank" href="https://www.airbnb.com.br/rooms/1366703907415936831">Ver anúncio</a>
+          <a class="btn" target="_blank" href="https://www.airbnb.com.br/rooms/1366703907415936831">Ver no Airbnb</a>
+          <a class="btn orange" href="reserva.html?imovel=Im%C3%B3vel%202">Reservar</a>
         </div>
       </div>
     </article>
 
-    <!-- Imóvel 3 -->
+    <!-- ================== IMÓVEL 3 ================== -->
     <article class="prop reveal" data-name="Imóvel 3" data-city="Campos do Jordão" data-area="vila-inglesa">
-      <div class="prop-img" style="background-image:url('https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1200&q=60');"></div>
+      <img class="prop-img"
+           src="https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1400&q=60"
+           alt="Imóvel 3"
+           loading="lazy"
+           decoding="async">
       <div class="prop-body">
-        <h3 class="prop-title">Imóvel 3 <span class="badge-mini">Airbnb</span></h3>
+        <h3 class="prop-title">Imóvel 3</h3>
         <p class="prop-meta">Campos do Jordão • Vila Inglesa</p>
+        <p class="prop-desc">
+          Opção perfeita para quem quer tranquilidade, conforto e fácil acesso às principais regiões.
+        </p>
+
+        <!-- REVIEWS (futuro) -->
+
         <div class="prop-actions">
-          <a class="btn" target="_blank" href="https://www.airbnb.com.br/rooms/1441574411572251909">Ver anúncio</a>
+          <a class="btn" target="_blank" href="https://www.airbnb.com.br/rooms/1441574411572251909">Ver no Airbnb</a>
+          <a class="btn orange" href="reserva.html?imovel=Im%C3%B3vel%203">Reservar</a>
         </div>
       </div>
     </article>
+
   </div>
 
   <div class="cta-box" style="margin-top:22px;">
-    <h2 class="title" style="margin-bottom:8px;">Quer entrar no portfólio?</h2>
+    <h2 class="title" style="margin-bottom:8px;">Quer colocar seu imóvel aqui?</h2>
     <p class="sub" style="margin-bottom:16px;">Preencha o formulário e a gente retorna com a avaliação inicial.</p>
     <a class="btn orange" href="formulario.html">Avaliar meu imóvel</a>
   </div>

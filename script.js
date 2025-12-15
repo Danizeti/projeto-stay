@@ -2,24 +2,28 @@
    STAYMAIS - CONFIGURAÇÕES RÁPIDAS (edite aqui)
    ========================================================= */
 const SITE_CONFIG = {
-  whatsappNumber: "5535999260177", // DDI+DDD+Número (sem espaços)
-  whatsappFloatShowAfterPx: 500,
+  whatsappNumber: "5535999260177",
+  whatsappFloatShowAfterPx: 520,
+
   enableRevealAnimations: true,
+  revealStaggerMs: 70, // animação “um por um”
   enableFaqAccordion: true,
 
-  // Form
+  // Formulários
   enableLeadFormWhatsappAfterEmail: true
 };
 
-/* =========================================================
-   Helpers (não mexe)
-   ========================================================= */
+/* Helpers */
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
-/* =========================================================
-   Menu mobile
-   ========================================================= */
+/* WhatsApp builder */
+function openWhatsApp(message) {
+  const url = `https://wa.me/${SITE_CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+/* Menu mobile */
 (() => {
   const burger = $("#burger");
   const links = $("#navLinks");
@@ -38,13 +42,16 @@ const $$ = (sel) => document.querySelectorAll(sel);
   });
 })();
 
-/* =========================================================
-   Reveal animations
-   ========================================================= */
+/* Reveal animations (com stagger) */
 (() => {
   if (!SITE_CONFIG.enableRevealAnimations) return;
   const revealEls = $$(".reveal");
   if (!revealEls.length) return;
+
+  // adiciona delay em cascata
+  revealEls.forEach((el, i) => {
+    el.style.transitionDelay = `${Math.min(i * SITE_CONFIG.revealStaggerMs, 420)}ms`;
+  });
 
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -55,9 +62,7 @@ const $$ = (sel) => document.querySelectorAll(sel);
   revealEls.forEach(el => io.observe(el));
 })();
 
-/* =========================================================
-   FAQ accordion
-   ========================================================= */
+/* FAQ accordion */
 (() => {
   if (!SITE_CONFIG.enableFaqAccordion) return;
   const btns = $$(".faq-q");
@@ -75,26 +80,21 @@ const $$ = (sel) => document.querySelectorAll(sel);
   });
 })();
 
-/* =========================================================
-   WhatsApp float
-   ========================================================= */
+/* WhatsApp float */
 (() => {
   const floatBtn = $("#whatsFloat");
   if (!floatBtn) return;
 
-  // garante número correto no botão flutuante
   floatBtn.setAttribute("href", `https://wa.me/${SITE_CONFIG.whatsappNumber}`);
 
   function toggleFloat() {
     floatBtn.classList.toggle("show", window.scrollY > SITE_CONFIG.whatsappFloatShowAfterPx);
   }
-  window.addEventListener("scroll", toggleFloat);
+  window.addEventListener("scroll", toggleFloat, { passive: true });
   toggleFloat();
 })();
 
-/* =========================================================
-   Portfólio: filtro + busca (só roda se existir)
-   ========================================================= */
+/* Portfólio: filtro + busca */
 (() => {
   const chips = $$(".chip");
   const searchInput = $("#propSearch");
@@ -130,33 +130,32 @@ const $$ = (sel) => document.querySelectorAll(sel);
   applyFilters();
 })();
 
-/* =========================================================
-   Lead form (1 botão): envia e-mail e abre WhatsApp
-   ========================================================= */
+/* Form Avaliação (envia e-mail + abre WhatsApp) */
 (() => {
   const form = $("#leadForm");
   const msgEl = $("#leadMsg");
   if (!form) return;
 
   form.addEventListener("submit", () => {
-    // GARANTIA: sempre POST no FormSubmit
+    // Garantia
     form.setAttribute("method", "POST");
     form.setAttribute("action", "https://formsubmit.co/staymaisreservas@gmail.com");
 
-    if (SITE_CONFIG.enableLeadFormWhatsappAfterEmail) {
-      const fd = new FormData(form);
+    if (!SITE_CONFIG.enableLeadFormWhatsappAfterEmail) return;
 
-      const nome = (fd.get("Nome") || "").toString().trim();
-      const whatsCliente = (fd.get("WhatsApp") || "").toString().trim();
-      const cidade = (fd.get("Cidade") || "").toString().trim();
-      const bairro = (fd.get("Bairro") || "").toString().trim();
-      const tipo = (fd.get("Tipo") || "").toString().trim();
-      const quartos = (fd.get("Quartos") || "").toString().trim();
-      const status = (fd.get("Status no Airbnb") || "").toString().trim();
-      const link = (fd.get("Link do anúncio") || "").toString().trim();
-      const obs = (fd.get("Observações") || "").toString().trim();
+    const fd = new FormData(form);
 
-      const waMsg =
+    const nome = (fd.get("Nome") || "").toString().trim();
+    const whatsCliente = (fd.get("WhatsApp") || "").toString().trim();
+    const cidade = (fd.get("Cidade") || "").toString().trim();
+    const bairro = (fd.get("Bairro") || "").toString().trim();
+    const tipo = (fd.get("Tipo") || "").toString().trim();
+    const quartos = (fd.get("Quartos") || "").toString().trim();
+    const status = (fd.get("Status no Airbnb") || "").toString().trim();
+    const link = (fd.get("Link do anúncio") || "").toString().trim();
+    const obs = (fd.get("Observações") || "").toString().trim();
+
+    const waMsg =
 `Olá! Tudo bem?
 
 Gostaria de solicitar uma avaliação do meu imóvel para gestão com a StayMais.
@@ -171,11 +170,66 @@ Gostaria de solicitar uma avaliação do meu imóvel para gestão com a StayMais
 • Link do anúncio: ${link || "-"}
 • Observações: ${obs || "-"}
 
-Fico à disposição para encaminhar mais informações e fotos, se necessário.
 Obrigado(a)!`;
 
-      window.open(`https://wa.me/${SITE_CONFIG.whatsappNumber}?text=${encodeURIComponent(waMsg)}`, "_blank");
-      if (msgEl) msgEl.textContent = "Enviando por e-mail e abrindo WhatsApp com a mensagem pronta…";
+    openWhatsApp(waMsg);
+    if (msgEl) msgEl.textContent = "Enviando por e-mail e abrindo WhatsApp com a mensagem pronta…";
+  });
+})();
+
+/* =========================================================
+   FORM RESERVA (capta dados e abre WhatsApp)
+   =========================================================
+   Regras:
+   - NÃO envia e-mail
+   - Apenas abre o WhatsApp com mensagem pronta
+   - Valida datas (check-out > check-in) para evitar erro bobo
+   ========================================================= */
+(() => {
+  const form = document.querySelector("#reserveForm");
+  if (!form) return;
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const fd = new FormData(form);
+
+    // Coleta dos campos
+    const imovel   = (fd.get("Imóvel") || "").toString().trim();
+    const nome     = (fd.get("Nome") || "").toString().trim();
+    const whats    = (fd.get("WhatsApp") || "").toString().trim();
+    const email    = (fd.get("Email") || "").toString().trim();
+    const checkin  = (fd.get("Check-in") || "").toString().trim();
+    const checkout = (fd.get("Check-out") || "").toString().trim();
+    const hospedes = (fd.get("Hóspedes") || "").toString().trim();
+    const objetivo = (fd.get("Objetivo") || "").toString().trim();
+    const obs      = (fd.get("Observações") || "").toString().trim();
+
+    // Validação simples de datas (evita enviar com data invertida)
+    if (checkin && checkout && checkout <= checkin) {
+      alert("A data de Check-out precisa ser depois do Check-in.");
+      return;
     }
+
+    // Montagem da mensagem para WhatsApp (profissional, direta e completa)
+    const msg =
+`Olá! Tudo bem?
+
+Quero solicitar ${objetivo.toLowerCase()} para uma estadia com a StayMais.
+
+• Imóvel: ${imovel}
+• Nome: ${nome}
+• WhatsApp: ${whats}
+• E-mail: ${email}
+• Check-in: ${checkin}
+• Check-out: ${checkout}
+• Hóspedes: ${hospedes}
+• Observações: ${obs || "-"}
+
+Pode me passar disponibilidade e valores, por favor?`;
+
+    // Abre WhatsApp em nova aba
+    const url = `https://wa.me/${SITE_CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   });
 })();

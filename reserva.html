@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <!-- =======================================================
+       STAYMAIS | RESERVA
+       - Esta página capta dados básicos e abre o WhatsApp com mensagem pronta
+       - O nome do imóvel vem via URL: reserva.html?imovel=Nome
+       ======================================================= -->
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>StayMais | Reserva</title>
+
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="preload" as="image" href="logo.png">
+</head>
+<body>
+
+<!-- =======================================================
+     MENU TOPO
+     ======================================================= -->
+<nav class="topbar">
+  <div class="nav-inner">
+    <a class="brand" href="index.html#inicio">
+      <img src="logo.png" alt="StayMais">
+      <span>staymais</span>
+    </a>
+
+    <button id="burger" class="burger" aria-label="Abrir menu" aria-expanded="false">☰ Menu</button>
+
+    <div id="navLinks" class="links">
+      <a href="index.html#servicos">Serviços</a>
+      <a href="portfolio.html">Portfólio</a>
+      <a class="cta" href="index.html#inicio">Início</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Botão flutuante do WhatsApp -->
+<a id="whatsFloat" class="whats-float" target="_blank" href="https://wa.me/5535999260177">WhatsApp</a>
+
+<!-- =======================================================
+     CONTEÚDO PRINCIPAL
+     ======================================================= -->
+<section class="container reveal">
+  <h1 class="hero" style="font-size:38px;">Reserva via WhatsApp</h1>
+  <p class="sub">Preencha os dados básicos. Abriremos o WhatsApp com a mensagem pronta para você enviar.</p>
+
+  <div class="form-card">
+    <!-- =====================================================
+         FORM RESERVA
+         - Este form NÃO envia e-mail
+         - Ele abre o WhatsApp com os dados preenchidos
+         ===================================================== -->
+    <form id="reserveForm">
+      <div class="form-grid">
+        <input class="input" name="Imóvel" id="imovelField" placeholder="Nome do imóvel" required>
+        <input class="input" name="Nome" placeholder="Seu nome" required>
+      </div>
+
+      <div class="form-grid">
+        <input class="input" name="WhatsApp" placeholder="Seu WhatsApp (com DDD)" required>
+        <input class="input" name="Email" type="email" placeholder="Seu e-mail" required>
+      </div>
+
+      <div class="form-grid">
+        <input class="input" name="Hóspedes" placeholder="Quantidade de hóspedes" required>
+        
+      </div>
+
+      <div class="form-grid">
+        <input class="input" name="Check-in" type="date" required>
+        <input class="input" name="Check-out" type="date" required>
+        
+      </div>
+
+      <textarea class="input" name="Observações" rows="4"
+        placeholder="Observações (ex: pet, horário de chegada, necessidade especial...)"></textarea>
+
+      <button class="btn orange" type="submit">Enviar pedido no WhatsApp</button>
+      <p class="small" style="margin-top:10px;">Você será direcionado para o WhatsApp com a mensagem pronta.</p>
+    </form>
+  </div>
+</section>
+
+<div class="footer">© StayMais — Gestão de Hospedagens</div>
+
+<!-- =======================================================
+     SCRIPT: preenche o campo “Imóvel” via URL (?imovel=...)
+     ======================================================= -->
+<script>
+  const params = new URLSearchParams(location.search);
+  const imovel = params.get("imovel");
+  const field = document.getElementById("imovelField");
+  if (imovel && field) field.value = imovel;
+</script>
+
+<!-- JS principal -->
+<script src="script.js"></script>
+</body>
+</html>

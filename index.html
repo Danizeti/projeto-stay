@@ -1,14 +1,11 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <!-- =======================================================
-       STAYMAIS - CONFIG (edite aqui)
-       Logo: logo.png na mesma pasta
-       ======================================================= -->
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>StayMais | Gestão de Hospedagens</title>
   <link rel="stylesheet" href="styles.css"/>
+  <link rel="preload" as="image" href="logo.png">
 </head>
 <body>
 
@@ -23,10 +20,10 @@
 
     <div id="navLinks" class="links">
       <a href="#servicos">Serviços</a>
-      <a href="#como-funciona">Como Funciona</a>
-      <a href="#proprietarios">Proprietários</a>
+      <a href="#metodo">Método</a>
       <a href="portfolio.html">Portfólio</a>
-      <a class="cta" href="formulario.html">Avaliar meu imóvel</a>
+      <a href="#faq">FAQ</a>
+      <a class="cta" href="formulario.html">Avaliar imóvel</a>
     </div>
   </div>
 </nav>
@@ -35,41 +32,44 @@
 
 <section id="inicio" class="container reveal">
   <div class="hero-wrap">
-    <div class="hero-left">
-      <h1 class="hero">Gestão de hospedagem impecável — e sem dor de cabeça.</h1>
+    <div>
+      <h1 class="hero">Gestão de hospedagem que parece hotel mas é sua.</h1>
       <p class="sub">
-        A StayMais cuida de anúncio, atendimento 24h, precificação estratégica e limpeza.
-        Em <strong>Campos do Jordão</strong>, a operação é padrão alto. E o modelo já nasce pronto para expansão.
+        A StayMais cuida da operação ponta a ponta: anúncio, atendimento 24h, precificação estratégica e limpeza.
+        Em <strong>Campos do Jordão</strong> o padrão é impecável e o processo já nasce pronto para expansão.
       </p>
 
       <div class="badges">
         <div class="badge">Airbnb • Booking</div>
-        <div class="badge">Atendimento 24h</div>
+        <div class="badge">Atendimento rápido</div>
         <div class="badge">Preço dinâmico</div>
-        <div class="badge">Padrão e limpeza</div>
+        <div class="badge">Operação padronizada</div>
       </div>
 
-      <a class="btn orange" href="formulario.html">Quero avaliar meu imóvel</a>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a class="btn orange" href="formulario.html">Avaliar meu imóvel</a>
+        <a class="btn primary" href="portfolio.html">Ver portfólio</a>
+      </div>
 
-      <div class="notice">
-        <p class="small" style="margin:0;">
-          <strong>Campos do Jordão:</strong> atendimento rápido, operação padronizada e foco total em nota alta.
-          <br><strong>Expansão:</strong> replicamos o mesmo padrão em novas cidades.
+      <div class="panel" style="margin-top:16px;">
+        <p class="sub" style="margin:0;">
+          <strong>Resultado vem do básico bem feito:</strong> resposta rápida, anúncio correto e operação consistente.
+          É isso que sustenta nota alta e agenda cheia.
         </p>
-      </div>
-
-      <div class="kpis">
-        <div class="kpi"><strong>+ conversão</strong><span>resposta rápida = reserva</span></div>
-        <div class="kpi"><strong>+ faturamento</strong><span>preço dinâmico e estratégia</span></div>
-        <div class="kpi"><strong>+ tranquilidade</strong><span>gestão completa</span></div>
       </div>
     </div>
 
-    <div class="hero-right">
+    <div class="hero-card reveal">
       <img class="hero-img"
-           src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1200&q=60"
-           alt="Hospedagem">
-      <p class="small" style="margin-top:10px;">Troque por fotos reais dos seus imóveis para ganhar confiança.</p>
+           src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1600&q=60"
+           alt="Hospedagem"
+           loading="lazy"
+           decoding="async">
+      <div class="pad">
+        <p class="small" style="margin:0;">
+          
+        </p>
+      </div>
     </div>
   </div>
 </section>
@@ -78,64 +78,79 @@
 
 <section id="servicos" class="container reveal">
   <h2 class="title">O que fazemos por você</h2>
-  <p class="sub">Gestão completa da sua hospedagem: do anúncio ao check-out.</p>
+  <p class="sub">Gestão completa com padrão e consistência (que é o que manda no jogo).</p>
 
-  <div class="cards">
-    <div class="card"><h3>Anúncios profissionais</h3><p>Texto, fotos e estratégia para vender mais.</p></div>
-    <div class="card"><h3>Atendimento 24h</h3><p>Humano + automação para resposta rápida.</p></div>
-    <div class="card"><h3>Precificação dinâmica</h3><p>Preço ajustado conforme demanda e sazonalidade.</p></div>
-    <div class="card"><h3>Check-in e limpeza</h3><p>Operação padronizada para nota alta.</p></div>
-    <div class="card"><h3>Relatórios mensais</h3><p>Clareza de ganhos e performance.</p></div>
-    <div class="card"><h3>Contrato transparente</h3><p>Sem letra miúda. Combinado claro.</p></div>
+  <div class="grid">
+    <div class="card reveal"><h3>Anúncios profissionais</h3><p>Título, descrição, fotos e diferenciais para converter.</p></div>
+    <div class="card reveal"><h3>Atendimento 24h</h3><p>Humano + automação: rapidez sem perder qualidade.</p></div>
+    <div class="card reveal"><h3>Precificação dinâmica</h3><p>Preço ajustado por demanda, sazonalidade e concorrência.</p></div>
+    <div class="card reveal"><h3>Check-in e suporte</h3><p>Orientação, dúvidas e problemas resolvidos sem stress.</p></div>
+    <div class="card reveal"><h3>Limpeza padronizada</h3><p>Operação que sustenta nota e evita reclamação.</p></div>
+    <div class="card reveal"><h3>Relatórios</h3><p>Visão clara de performance, ganhos e oportunidades.</p></div>
   </div>
 </section>
 
-<section id="como-funciona" class="container reveal">
-  <h2 class="title">Como Funciona</h2>
-  <p class="sub">Processo simples para você lucrar sem se preocupar.</p>
-
-  <div class="cards">
-    <div class="card"><h3>1. Avaliação</h3><p>Analisamos potencial e ajustes rápidos.</p></div>
-    <div class="card"><h3>2. Preparação</h3><p>Checklist, fotos e anúncio otimizado.</p></div>
-    <div class="card"><h3>3. Publicação</h3><p>Airbnb, Booking e outras.</p></div>
-    <div class="card"><h3>4. Gestão diária</h3><p>Reservas, hóspedes, limpeza e suporte.</p></div>
-    <div class="card"><h3>5. Relatório</h3><p>Performance e repasse mensal.</p></div>
-  </div>
-</section>
-
-<section id="proprietarios" class="container reveal">
-  <h2 class="title">Para Proprietários</h2>
+<section id="metodo" class="container reveal">
+  <h2 class="title">Como elevamos a performance</h2>
   <p class="sub">
-    Você não precisa virar recepção, hotelaria e limpeza ao mesmo tempo.
-    A StayMais cuida da operação e você foca no resultado.
+    O que aumenta reservas é conversão. Conversão vem de velocidade, clareza e operação impecável.
   </p>
 
-  <div class="cards">
-    <div class="card"><h3>Mais reservas</h3><p>Resposta rápida + anúncio bem feito aumentam conversão.</p></div>
-    <div class="card"><h3>Mais faturamento</h3><p>Precificação dinâmica e estratégia por sazonalidade.</p></div>
-    <div class="card"><h3>Menos dor de cabeça</h3><p>Atendimento 24h e operação profissional.</p></div>
+  <div class="split">
+    <div class="panel reveal">
+      <h3 style="margin:0 0 10px;color:var(--brand);letter-spacing:-.2px;">Pilares do nosso método</h3>
+      <ul class="list">
+        <li><strong>Resposta rápida</strong> (evita perder reserva).</li>
+        <li><strong>Anúncio convincente</strong> (texto + fotos + diferenciais).</li>
+        <li><strong>Operação consistente</strong> (limpeza, check-in e suporte).</li>
+        <li><strong>Preço inteligente</strong> (nem barato demais, nem caro demais).</li>
+        <li><strong>Reputação</strong> (nota alta vem de padrão, não de sorte).</li>
+      </ul>
+    </div>
+
+    <div class="panel reveal">
+      <h3 style="margin:0 0 10px;color:var(--brand);letter-spacing:-.2px;">O que isso melhora</h3>
+      <div class="mini-bars">
+        <div class="bar">
+          <div class="label">Conversão</div>
+          <div class="track"><div class="fill" style="width:18%"></div></div>
+        </div>
+        <div class="bar">
+          <div class="label">Nota do anúncio</div>
+          <div class="track"><div class="fill" style="width:72%"></div></div>
+        </div>
+        <div class="bar">
+          <div class="label">Ocupação</div>
+          <div class="track"><div class="fill" style="width:66%"></div></div>
+        </div>
+        <p class="small" style="margin:10px 0 0;">
+          *Barras ilustrativas para explicar o impacto do método. Quando tiver números reais, a gente substitui.
+        </p>
+      </div>
+    </div>
   </div>
 
-  <div style="margin-top:16px;">
+  <div class="cta-box reveal" style="margin-top:18px;">
+    <h2 class="title" style="margin-bottom:8px;">Quer transformar seu imóvel em hospedagem lucrativa?</h2>
+    <p class="sub" style="margin-bottom:16px;">Comece pela avaliação. É simples e rápido.</p>
     <a class="btn orange" href="formulario.html">Avaliar meu imóvel</a>
-    <a class="btn" style="margin-left:10px;" href="portfolio.html">Ver portfólio</a>
   </div>
 </section>
 
-<section class="container reveal">
+<section id="faq" class="container reveal">
   <h2 class="title">Perguntas frequentes</h2>
   <div class="faq">
-    <div class="faq-item">
+    <div class="faq-item reveal">
       <button class="faq-q">Vocês cuidam de tudo mesmo? <span>+</span></button>
-      <div class="faq-a">Sim: anúncio, atendimento 24h, check-in, limpeza, suporte e precificação dinâmica.</div>
+      <div class="faq-a">Sim. Do anúncio ao suporte e operação. Você acompanha, mas não precisa operar.</div>
     </div>
-    <div class="faq-item">
-      <button class="faq-q">O serviço é só em Campos do Jordão? <span>+</span></button>
-      <div class="faq-a">Hoje a operação principal é em Campos do Jordão com padrão alto. A expansão segue o mesmo nível.</div>
+    <div class="faq-item reveal">
+      <button class="faq-q">É só em Campos do Jordão? <span>+</span></button>
+      <div class="faq-a">Hoje a operação principal é Campos do Jordão com padrão impecável. A expansão segue o mesmo modelo.</div>
     </div>
-    <div class="faq-item">
-      <button class="faq-q">Como vocês cobram? <span>+</span></button>
-      <div class="faq-a">Percentual sobre faturamento ou modelo combinado — transparente, sem pegadinhas.</div>
+    <div class="faq-item reveal">
+      <button class="faq-q">Como funciona o contrato? <span>+</span></button>
+      <div class="faq-a">Simples e transparente. Sem pegadinha. Definimos responsabilidades, prazos e repasses.</div>
     </div>
   </div>
 </section>
