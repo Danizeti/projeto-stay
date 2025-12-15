@@ -523,8 +523,14 @@ Gostaria de solicitar uma avaliação do meu imóvel para gestão com a StayMais
 • Observações: ${obs || "-"}
 
 Obrigado(a)!`;
+sessionStorage.setItem("staymais_last_reserve_msg", msg);
 
     openWhatsApp(waMsg);
+    setTimeout(() => {
+  window.location.href = "obrigado-reserva.html";
+}, 900);
+
     if (msgEl) msgEl.textContent = "Enviando por e-mail e abrindo WhatsApp com a mensagem pronta…";
   });
+  
 })();
