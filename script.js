@@ -1,27 +1,116 @@
 /* =========================================================
-   STAYMAIS - SCRIPT PRINCIPAL (JSON EXTERNO)
+   STAYMAIS - SCRIPT PRINCIPAL (MANUTENÇÃO FÁCIL)
    =========================================================
    Onde editar:
    1) SITE_CONFIG -> ajustes gerais
-   2) properties.json -> dados dos imóveis (sem mexer no JS)
+   2) PROPERTIES  -> dados dos imóveis (nome, fotos, regras, badges, link)
    ========================================================= */
 
 /* =========================================================
    1) CONFIGURAÇÕES RÁPIDAS (edite aqui)
    ========================================================= */
 const SITE_CONFIG = {
-  whatsappNumber: "5535999260177",
+  whatsappNumber: "5535999260177",          // DDI+DDD+Número (sem espaços)
   whatsappFloatShowAfterPx: 520,
 
   enableRevealAnimations: true,
-  revealStaggerMs: 70,
+  revealStaggerMs: 70,                      // animação “em cascata”
   enableFaqAccordion: true,
 
-  // JSON externo
-  propertiesJsonUrl: "properties.json", // pode virar "data/properties.json" se você preferir pasta
+  // Texto discreto para incentivar reserva direta
+  directBookingHintShort: "Reserva direta com a StayMais pode incluir brinde ou desconto (conforme disponibilidade).",
+};
 
-  directBookingHintShort:
-    "Reserva direta com a StayMais pode incluir brinde ou desconto (conforme disponibilidade).",
+/* =========================================================
+   2) DADOS DOS IMÓVEIS (edite aqui)
+   =========================================================
+   Dica:
+   - fotos: coloque URLs reais (pode ser do seu próprio site depois)
+   - badges: use termos curtos
+   - rules: frases curtas e claras
+   - airbnbUrl: mantém “Ver no Airbnb”
+   ========================================================= */
+const PROPERTIES = {
+  imovel1: {
+    name: "Imóvel 1",
+    city: "Campos do Jordão",
+    area: "capivari",
+    areaLabel: "Capivari",
+    airbnbUrl: "https://www.airbnb.com.br/rooms/1489778972017530668",
+    badges: [
+      { text: "Mais reservado", hot: true },
+      { text: "Vista" },
+      { text: "Conforto" },
+    ],
+    rules: [
+      "Check-in: a combinar",
+      "Check-out: a combinar",
+      "Pet: consultar",
+      "Vaga: consultar",
+      "Silêncio: após 22h",
+    ],
+    description:
+      "Hospedagem com foco em conforto e praticidade, ideal para casais ou pequenas famílias.",
+    photos: [
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1600&q=60",
+    ],
+  },
+
+  imovel2: {
+    name: "Imóvel 2",
+    city: "Campos do Jordão",
+    area: "alto-da-boa-vista",
+    areaLabel: "Alto da Boa Vista",
+    airbnbUrl: "https://www.airbnb.com.br/rooms/1366703907415936831",
+    badges: [
+      { text: "Lareira" },
+      { text: "Família" },
+      { text: "Tranquilo" },
+    ],
+    rules: [
+      "Check-in: a combinar",
+      "Check-out: a combinar",
+      "Pet: não permitido",
+      "Vaga: 1 vaga",
+      "Sem festas",
+    ],
+    description:
+      "Ambiente espaçoso, com estrutura completa para estadias confortáveis em qualquer época do ano.",
+    photos: [
+      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1600&q=60",
+    ],
+  },
+
+  imovel3: {
+    name: "Imóvel 3",
+    city: "Campos do Jordão",
+    area: "vila-inglesa",
+    areaLabel: "Vila Inglesa",
+    airbnbUrl: "https://www.airbnb.com.br/rooms/1441574411572251909",
+    badges: [
+      { text: "Casal" },
+      { text: "Aconchegante" },
+      { text: "Localização" },
+    ],
+    rules: [
+      "Check-in: a combinar",
+      "Check-out: a combinar",
+      "Pet: consultar",
+      "Vaga: consultar",
+      "Proibido fumar",
+    ],
+    description:
+      "Opção perfeita para quem quer tranquilidade, conforto e fácil acesso às principais regiões.",
+    photos: [
+      "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=60",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1600&q=60",
+    ],
+  },
 };
 
 /* =========================================================
@@ -36,7 +125,7 @@ function openWhatsApp(message) {
 }
 
 function formatAreaLabel(area) {
-  return (area || "").toString().replaceAll("-", " ");
+  return area.replaceAll("-", " ");
 }
 
 function calcNights(checkin, checkout) {
@@ -48,35 +137,7 @@ function calcNights(checkin, checkout) {
 }
 
 /* =========================================================
-   2) Reveal animations (funciona com conteúdo dinâmico)
-   ========================================================= */
-let _revealObserver = null;
-
-function initReveal(scope = document) {
-  if (!SITE_CONFIG.enableRevealAnimations) return;
-
-  const revealEls = scope.querySelectorAll(".reveal:not(.show)");
-  if (!revealEls.length) return;
-
-  if (!_revealObserver) {
-    _revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("show");
-          _revealObserver.unobserve(entry.target); // performance
-        }
-      });
-    }, { threshold: 0.12 });
-  }
-
-  revealEls.forEach((el, i) => {
-    el.style.transitionDelay = `${Math.min(i * (SITE_CONFIG.revealStaggerMs || 70), 420)}ms`;
-    _revealObserver.observe(el);
-  });
-}
-
-/* =========================================================
-   3) Menu mobile
+   Menu mobile
    ========================================================= */
 (() => {
   const burger = $("#burger");
@@ -88,7 +149,7 @@ function initReveal(scope = document) {
     burger.setAttribute("aria-expanded", isOpen ? "true" : "false");
   });
 
-  links.querySelectorAll("a").forEach((a) => {
+  links.querySelectorAll("a").forEach(a => {
     a.addEventListener("click", () => {
       links.classList.remove("open");
       burger.setAttribute("aria-expanded", "false");
@@ -97,27 +158,48 @@ function initReveal(scope = document) {
 })();
 
 /* =========================================================
-   4) FAQ accordion
+   Reveal animations (suave + em cascata)
+   ========================================================= */
+(() => {
+  if (!SITE_CONFIG.enableRevealAnimations) return;
+  const revealEls = $$(".reveal");
+  if (!revealEls.length) return;
+
+  revealEls.forEach((el, i) => {
+    el.style.transitionDelay = `${Math.min(i * SITE_CONFIG.revealStaggerMs, 420)}ms`;
+  });
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add("show");
+    });
+  }, { threshold: 0.12 });
+
+  revealEls.forEach(el => io.observe(el));
+})();
+
+/* =========================================================
+   FAQ accordion
    ========================================================= */
 (() => {
   if (!SITE_CONFIG.enableFaqAccordion) return;
   const btns = $$(".faq-q");
   if (!btns.length) return;
 
-  btns.forEach((btn) => {
+  btns.forEach(btn => {
     btn.addEventListener("click", () => {
       const item = btn.closest(".faq-item");
       if (!item) return;
 
       const open = item.classList.contains("open");
-      $$(".faq-item.open").forEach((i) => i.classList.remove("open"));
+      $$(".faq-item.open").forEach(i => i.classList.remove("open"));
       if (!open) item.classList.add("open");
     });
   });
 })();
 
 /* =========================================================
-   5) WhatsApp float
+   WhatsApp float
    ========================================================= */
 (() => {
   const floatBtn = $("#whatsFloat");
@@ -133,11 +215,17 @@ function initReveal(scope = document) {
 })();
 
 /* =========================================================
-   6) Galerias (slider) - inicializador genérico
+   Galerias (slider) - inicializador genérico
+   =========================================================
+   Como usar no HTML:
+   - Container: <div class="gallery" data-gallery>
+   - Track: <div class="gallery-track"> ...slides... </div>
+   - Botões: .gallery-btn.prev / .gallery-btn.next
+   - Dots: .gallery-dots com filhos .dot
    ========================================================= */
-function initGalleries(scope = document) {
+function initGalleries(scope=document) {
   const galleries = scope.querySelectorAll("[data-gallery]");
-  galleries.forEach((gallery) => {
+  galleries.forEach(gallery => {
     const track = gallery.querySelector(".gallery-track");
     const slides = gallery.querySelectorAll(".gallery-slide");
     const prev = gallery.querySelector(".gallery-btn.prev");
@@ -177,107 +265,79 @@ function initGalleries(scope = document) {
 }
 
 /* =========================================================
-   7) Carregar properties.json (fonte única de dados)
+   PORTFÓLIO - render automático dos cards
+   =========================================================
+   Necessário no portfolio.html:
+   - <div id="propertiesList"></div>
    ========================================================= */
-async function loadProperties() {
-  try {
-    const url = new URL(SITE_CONFIG.propertiesJsonUrl, document.baseURI).toString();
-    console.log("📦 Carregando JSON em:", url);
-
-    const res = await fetch(url, { cache: "no-store" });
-    console.log("📡 Status JSON:", res.status);
-
-    if (!res.ok) throw new Error(`Falha ao carregar JSON: ${res.status}`);
-
-    const data = await res.json();
-    console.log("✅ JSON carregado. Total de imóveis:", Object.keys(data || {}).length);
-
-    if (!data || typeof data !== "object") throw new Error("JSON inválido (não é objeto).");
-    return data;
-  } catch (err) {
-    console.error("❌ Erro ao carregar properties.json:", err);
-    return null;
-  }
-}
-
-
-/* =========================================================
-   8) Render do Portfólio (usa dados do JSON)
-   ========================================================= */
-function renderPortfolio(PROPERTIES) {
+(() => {
   const list = $("#propertiesList");
-  console.log("✅ propertiesList:", list);
-
   if (!list) return;
 
-  // Se não veio nada, mostra mensagem amigável
-  const ids = Object.keys(PROPERTIES || {});
-  if (!ids.length) {
-    list.innerHTML = `<p class="sub">Nenhum imóvel disponível no momento.</p>`;
-    return;
-  }
-
+  // Renderiza todos os imóveis
   const html = Object.entries(PROPERTIES).map(([id, p]) => {
-    const photos = Array.isArray(p.photos) ? p.photos : [];
-    const dots = photos.map((_, i) => `<span class="dot ${i === 0 ? "active" : ""}"></span>`).join("");
-    const slides = photos.map((src, i) => `
+    const dots = p.photos.map((_, i) => `<span class="dot ${i===0 ? "active":""}"></span>`).join("");
+    const slides = p.photos.map((src, i) => `
       <div class="gallery-slide">
-        <img src="${src}" alt="${p.name || "Hospedagem"} - foto ${i + 1}" loading="lazy" decoding="async">
+        <img src="${src}" alt="${p.name} - foto ${i+1}" loading="lazy" decoding="async">
       </div>
     `).join("");
 
-    const badges = (p.badges || []).map((b) =>
-      `<span class="badge-mini ${b.hot ? "hot" : ""}">${b.text}</span>`
+    const badges = (p.badges || []).map(b =>
+      `<span class="badge-mini ${b.hot ? "hot":""}">${b.text}</span>`
     ).join("");
 
-    const rules = (p.rules || []).map((r) => `<li>${r}</li>`).join("");
+    const rules = (p.rules || []).map(r => `<li>${r}</li>`).join("");
 
     return `
-      <article class="prop reveal" data-name="${p.name || ""}" data-city="${p.city || ""}" data-area="${p.area || ""}">
+      <article class="prop reveal" data-name="${p.name}" data-city="${p.city}" data-area="${p.area}">
         <div class="gallery" data-gallery>
           <div class="gallery-track">${slides}</div>
+
           <button class="gallery-btn prev" aria-label="Foto anterior">‹</button>
           <button class="gallery-btn next" aria-label="Próxima foto">›</button>
+
           <div class="gallery-dots" aria-hidden="true">${dots}</div>
         </div>
 
         <div class="prop-body">
-          <h3 class="prop-title">${p.name || "Hospedagem"}</h3>
-          <p class="prop-meta">${p.city || ""} • ${(p.areaLabel || formatAreaLabel(p.area) || "")}</p>
+          <h3 class="prop-title">${p.name}</h3>
+          <p class="prop-meta">${p.city} • ${p.areaLabel || formatAreaLabel(p.area)}</p>
 
           <div class="badge-set">${badges}</div>
 
-          <p class="prop-desc">${p.description || ""}</p>
+          <p class="prop-desc">${p.description}</p>
 
           <div class="rules">
             <h4>Regras e informações</h4>
             <ul>${rules}</ul>
           </div>
 
+          <!-- Incentivo discreto (não “grita”, mas vende) -->
           <div class="book-hint">${SITE_CONFIG.directBookingHintShort}</div>
 
           <div class="prop-actions">
-            <a class="btn" target="_blank" href="${p.airbnbUrl || "#"}">Ver no Airbnb</a>
+            <a class="btn" target="_blank" href="${p.airbnbUrl}">Ver no Airbnb</a>
             <a class="btn orange" href="reserva.html?id=${encodeURIComponent(id)}">Reservar direto</a>
           </div>
+
+          <!-- REVIEWS (futuro - quando liberar depoimentos)
+          <div class="panel" style="margin-top:12px;">
+            <p class="small"><strong>★ 4,9</strong> (128 avaliações)</p>
+            <p class="small">"Lugar impecável e atendimento rápido!" — Ana</p>
+          </div>
+          -->
         </div>
       </article>
     `;
   }).join("");
 
   list.innerHTML = html;
-  list.style.border = "2px solid red";
-  list.style.minHeight = "200px";
 
-  console.log("✅ Portfólio renderizado. props:", document.querySelectorAll(".prop").length);
-  
+  // Liga slider nas galerias do portfólio
+  initGalleries(document);
 
-
-  // Ativa componentes do conteúdo recém-criado
-  initGalleries(list);
-  initReveal(list);
-
-  // Busca/Filtro (se existir na página)
+  // Filtro + busca
   const chips = $$(".chip");
   const searchInput = $("#propSearch");
   const props = $$(".prop");
@@ -287,7 +347,7 @@ function renderPortfolio(PROPERTIES) {
     const filter = activeChip ? activeChip.dataset.filter : "todos";
     const query = (searchInput?.value || "").trim().toLowerCase();
 
-    props.forEach((card) => {
+    props.forEach(card => {
       const city = (card.dataset.city || "").toLowerCase();
       const area = (card.dataset.area || "").toLowerCase();
       const name = (card.dataset.name || "").toLowerCase();
@@ -299,9 +359,9 @@ function renderPortfolio(PROPERTIES) {
     });
   }
 
-  chips.forEach((chip) => {
+  chips.forEach(chip => {
     chip.addEventListener("click", () => {
-      chips.forEach((c) => c.classList.remove("active"));
+      chips.forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
       applyFilters();
     });
@@ -309,40 +369,42 @@ function renderPortfolio(PROPERTIES) {
 
   searchInput?.addEventListener("input", applyFilters);
   applyFilters();
-}
+})();
 
 /* =========================================================
-   9) Render da Reserva (usa dados do JSON)
+   RESERVA - render da página com base em ?id=
    ========================================================= */
-function renderReserva(PROPERTIES) {
+(() => {
   const titleEl = $("#reserveTitle");
   const galleryHost = $("#reserveGalleryHost");
   const form = $("#reserveForm");
+
   if (!titleEl || !galleryHost || !form) return;
 
   const params = new URLSearchParams(location.search);
   const id = params.get("id");
-  const p = id ? PROPERTIES?.[id] : null;
 
+  const p = id ? PROPERTIES[id] : null;
   if (!p) {
     titleEl.textContent = "Reserva";
     galleryHost.innerHTML = `<p class="sub">Imóvel não encontrado. Volte ao portfólio e tente novamente.</p>`;
     return;
   }
 
-  titleEl.textContent = p.name || "Reserva";
+  // Título
+  titleEl.textContent = p.name;
 
-  const photos = Array.isArray(p.photos) ? p.photos : [];
-  const slides = photos.map((src, i) => `
+  // Galeria (fotos do imóvel selecionado)
+  const slides = p.photos.map((src, i) => `
     <div class="gallery-slide">
-      <img src="${src}" alt="${p.name || "Hospedagem"} - foto ${i + 1}" loading="lazy" decoding="async">
+      <img src="${src}" alt="${p.name} - foto ${i+1}" loading="lazy" decoding="async">
     </div>
   `).join("");
 
-  const dots = photos.map((_, i) => `<span class="dot ${i === 0 ? "active" : ""}"></span>`).join("");
+  const dots = p.photos.map((_, i) => `<span class="dot ${i===0 ? "active":""}"></span>`).join("");
 
   galleryHost.innerHTML = `
-    <div class="gallery reserve-gallery reveal" data-gallery>
+    <div class="gallery reserve-gallery" data-gallery>
       <div class="gallery-track">${slides}</div>
       <button class="gallery-btn prev" aria-label="Foto anterior">‹</button>
       <button class="gallery-btn next" aria-label="Próxima foto">›</button>
@@ -353,17 +415,16 @@ function renderReserva(PROPERTIES) {
     </div>
   `;
 
-  initGalleries(galleryHost);
-  initReveal(galleryHost);
+  initGalleries(document);
 
-  // diárias
+  // Elementos de data/diárias
   const inEl = $("#checkin");
   const outEl = $("#checkout");
   const nightsEl = $("#nightsCount");
 
   function updateNights() {
     const n = calcNights(inEl.value, outEl.value);
-    nightsEl.textContent = n > 0 ? `${n} diária${n > 1 ? "s" : ""}` : "Selecione as datas";
+    nightsEl.textContent = n > 0 ? `${n} diária${n>1?"s":""}` : "Selecione as datas";
   }
 
   inEl?.addEventListener("change", updateNights);
@@ -372,13 +433,14 @@ function renderReserva(PROPERTIES) {
   // Envio: abre WhatsApp
   form.addEventListener("submit", (e) => {
     e.preventDefault();
+
     const fd = new FormData(form);
 
-    const nome = (fd.get("Nome") || "").toString().trim();
+    const nome     = (fd.get("Nome") || "").toString().trim();
     const telefone = (fd.get("Telefone") || "").toString().trim();
-    const email = (fd.get("Email") || "").toString().trim();
+    const email    = (fd.get("Email") || "").toString().trim();
     const hospedes = (fd.get("Hóspedes") || "").toString().trim();
-    const checkin = (fd.get("Check-in") || "").toString().trim();
+    const checkin  = (fd.get("Check-in") || "").toString().trim();
     const checkout = (fd.get("Check-out") || "").toString().trim();
 
     const nights = calcNights(checkin, checkout);
@@ -392,7 +454,7 @@ function renderReserva(PROPERTIES) {
 
 Quero reservar diretamente com a StayMais.
 
-• Imóvel: ${p.name || "-"}
+• Imóvel: ${p.name}
 • Nome: ${nome}
 • Telefone/WhatsApp: ${telefone}
 • E-mail: ${email}
@@ -409,12 +471,12 @@ Pode me confirmar disponibilidade e valores, por favor?`;
   });
 
   updateNights();
-}
+})();
 
 /* =========================================================
-   10) Form Avaliação (FormSubmit) - mantém seu fluxo atual
+   FORM AVALIAÇÃO (FormSubmit) - envia e-mail + abre WhatsApp
    ========================================================= */
-function bindLeadForm() {
+(() => {
   const form = $("#leadForm");
   const msgEl = $("#leadMsg");
   if (!form) return;
@@ -455,34 +517,4 @@ Obrigado(a)!`;
     openWhatsApp(waMsg);
     if (msgEl) msgEl.textContent = "Enviando por e-mail e abrindo WhatsApp com a mensagem pronta…";
   });
-}
-
-/* =========================================================
-   11) Bootstrap do site (carrega JSON e renderiza páginas)
-   ========================================================= */
-(async () => {
-  // animações iniciais do que já existe em tela
-  console.log("📄 Página atual:", location.pathname);
-  console.log("🧩 Tem #propertiesList?", !!document.getElementById("propertiesList"));
-
-  initReveal(document);
-
-  // forms
-  bindLeadForm();
-
-  // Carrega imóveis do JSON
-  const PROPERTIES = await loadProperties();
-
-  // Se falhar, mostra fallback (e não quebra o resto do site)
-  if (!PROPERTIES) {
-    const list = $("#propertiesList");
-    if (list) list.innerHTML = `<p class="sub">Não foi possível carregar os imóveis agora. Tente novamente em instantes.</p>`;
-    const host = $("#reserveGalleryHost");
-    if (host) host.innerHTML = `<p class="sub">Não foi possível carregar os dados do imóvel. Volte ao portfólio e tente novamente.</p>`;
-    return;
-  }
-
-  // Renderiza onde fizer sentido (cada função já verifica se existe)
-  renderPortfolio(PROPERTIES);
-  renderReserva(PROPERTIES);
 })();
