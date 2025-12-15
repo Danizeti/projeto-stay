@@ -331,6 +331,16 @@ function initGalleries(scope=document) {
       </article>
     `;
   }).join("");
+  // depois de preencher o HTML dos cards:
+  requestAnimationFrame(() => {
+    document.querySelectorAll("#propertiesList .reveal")
+      .forEach(el => el.classList.add("show"));
+  });
+
+  document.querySelectorAll(".reveal").forEach(el => {
+  el.style.opacity = 1;
+  el.style.transform = "none";
+});
 
   list.innerHTML = html;
 

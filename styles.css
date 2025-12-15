@@ -440,6 +440,24 @@ h2.title{
 @media (max-width: 700px){
   .form-grid{ grid-template-columns:1fr; }
 }
+/* Select (Hóspedes) — corrige dropdown no dark mode */
+select,
+.search,
+.input{
+  color: var(--text);
+  background: var(--input-bg);
+}
+
+/* As opções do dropdown */
+select option{
+  color: var(--text);
+  background: var(--surface);
+}
+
+/* Força o “tema” do controle nativo em dark */
+@media (prefers-color-scheme: dark){
+  select{ color-scheme: dark; }
+}
 
 .input{
   width:100%;
@@ -619,6 +637,7 @@ textarea.input{ resize:vertical; }
   border-bottom: 1px solid color-mix(in srgb, var(--border) 95%, transparent);
   background: color-mix(in srgb, var(--surface) 95%, transparent);
 }
+.prop { min-height: 260px; }
 
 /* Track que “anda” lateralmente */
 .gallery-track{
