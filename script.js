@@ -476,8 +476,13 @@ Quero reservar diretamente com a StayMais.
 Obs: Tenho interesse na reserva direta (possível brinde/desconto, conforme disponibilidade).
 
 Pode me confirmar disponibilidade e valores, por favor?`;
+sessionStorage.setItem("staymais_last_reserve_msg", msg);
 
     openWhatsApp(msg);
+    setTimeout(() => {
+  window.location.href = "obrigado-reserva.html";
+}, 900);
+
   });
 
   updateNights();
@@ -523,14 +528,8 @@ Gostaria de solicitar uma avaliação do meu imóvel para gestão com a StayMais
 • Observações: ${obs || "-"}
 
 Obrigado(a)!`;
-sessionStorage.setItem("staymais_last_reserve_msg", msg);
 
     openWhatsApp(waMsg);
-    setTimeout(() => {
-  window.location.href = "obrigado-reserva.html";
-}, 900);
-
     if (msgEl) msgEl.textContent = "Enviando por e-mail e abrindo WhatsApp com a mensagem pronta…";
   });
-  
 })();
