@@ -19,6 +19,11 @@ const SITE_CONFIG = {
 
   // Texto discreto para incentivar reserva direta
   directBookingHintShort: "Reserva direta com a StayMais pode incluir brinde ou desconto (conforme disponibilidade).",
+
+  //leads
+  googleSheetsWebhook: "https://script.google.com/macros/s/AKfycbzApu0HECitmFp6f65LSQ8sEM6JT63uxyaNqDJ7MoEBG3tHKh_HRddAVY-leG4sSS8Q/exec",
+  googleSheetsToken: "AKfycbzApu0HECitmFp6f65LSQ8sEM6JT63uxyaNqDJ7MoEBG3tHKh_HRddAVY-leG4sSS8Q",
+
 };
 
 /* =========================================================
@@ -118,6 +123,33 @@ const PROPERTIES = {
    ========================================================= */
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
+async function sendToSheets(type, data) {
+  try {
+    if (!SITE_CONFIG.googleSheetsWebhook) return { ok: false, skipped: true };
+
+    const payload = {
+      token: SITE_CONFIG.googleSheetsToken,
+      type,
+      data,
+      meta: {
+        origem: location.href,
+        userAgent: navigator.userAgent
+      }
+    };
+
+    const res = await fetch(SITE_CONFIG.googleSheetsWebhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const json = await res.json().catch(() => ({}));
+    return json;
+  } catch (e) {
+    console.error("Erro ao enviar para Sheets:", e);
+    return { ok: false, error: String(e) };
+  }
+}
 
 function openWhatsApp(message) {
   const url = `https://wa.me/${SITE_CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
@@ -477,6 +509,17 @@ Obs: Tenho interesse na reserva direta (possível brinde/desconto, conforme disp
 
 Pode me confirmar disponibilidade e valores, por favor?`;
 sessionStorage.setItem("staymais_last_reserve_msg", msg);
+sendToSheets("reserva", {
+  imovelId: id,
+  imovelNome: p.name,
+  nome,
+  telefone,
+  email,
+  hospedes,
+  checkin,
+  checkout,
+  diarias: nights > 0 ? nights : ""
+});
 
     openWhatsApp(msg);
     setTimeout(() => {
@@ -528,6 +571,17 @@ Gostaria de solicitar uma avaliação do meu imóvel para gestão com a StayMais
 • Observações: ${obs || "-"}
 
 Obrigado(a)!`;
+sendToSheets("avaliacao", {
+  nome,
+  whatsapp: whatsCliente,
+  cidade,
+  bairro,
+  tipo,
+  quartos,
+  statusAirbnb: status,
+  linkAnuncio: link,
+  observacoes: obs
+});
 
     openWhatsApp(waMsg);
     if (msgEl) msgEl.textContent = "Enviando por e-mail e abrindo WhatsApp com a mensagem pronta…";
