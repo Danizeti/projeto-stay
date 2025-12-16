@@ -531,7 +531,7 @@ Pode me confirmar disponibilidade e valores, por favor?`;
     sessionStorage.setItem("staymais_last_reserve_msg", msg);
 
     // Salva no Google Sheets (não bloqueia conversão, mas tenta com robustez)
-    await sendToSheets("reserva", {
+    await sendToSheets("Reservas", {
       hp,
       imovelId: id,
       imovelNome: p.name || "",
@@ -610,7 +610,7 @@ Gostaria de solicitar uma avaliação do meu imóvel para gestão com a StayMais
 Obrigado(a)!`;
 
     // Salva no Sheets (lead interno)
-    await sendToSheets("avaliacao", {
+    await sendToSheets("Avaliacoes", {
       hp,
       nome,
       whatsapp: whatsCliente,
