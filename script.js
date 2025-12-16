@@ -29,7 +29,7 @@ const SITE_CONFIG = {
   enableFaqAccordion: true,
 
   // Dados (JSON externo)
-  propertiesJsonUrl: "/properties.json", // use "/properties.json" para funcionar em qualquer pasta
+  propertiesJsonUrl: "./properties.json", // use "/properties.json" para funcionar em qualquer pasta
 
   // Google Sheets (Web App do Apps Script)
   googleSheetsWebhook: "https://script.google.com/macros/s/AKfycbzApu0HECitmFp6f65LSQ8sEM6JT63uxyaNqDJ7MoEBG3tHKh_HRddAVY-leG4sSS8Q/exec",
