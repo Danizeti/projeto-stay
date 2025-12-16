@@ -1,155 +1,57 @@
 /* =========================================================
    STAYMAIS - SCRIPT PRINCIPAL (MANUTENÇÃO FÁCIL)
    =========================================================
+   Este arquivo controla:
+   - Menu mobile
+   - Animações (reveal)
+   - Botão flutuante do WhatsApp
+   - Portfólio (carrega imóveis de properties.json)
+   - Reserva (pega id do imóvel, monta galeria, envia WhatsApp, redirect)
+   - Form de avaliação (salva no Google Sheets + abre WhatsApp + (opcional) FormSubmit)
+
    Onde editar:
-   1) SITE_CONFIG -> ajustes gerais
-   2) PROPERTIES  -> dados dos imóveis (nome, fotos, regras, badges, link)
+   1) SITE_CONFIG -> ajustes gerais do site
+   2) properties.json -> dados dos imóveis (nome, fotos, regras, badges, link)
+   3) Apps Script -> valida e salva no Sheets (token/origens/limites)
    ========================================================= */
 
 /* =========================================================
    1) CONFIGURAÇÕES RÁPIDAS (edite aqui)
    ========================================================= */
 const SITE_CONFIG = {
-  whatsappNumber: "5535999260177",          // DDI+DDD+Número (sem espaços)
-  whatsappFloatShowAfterPx: 520,
+  // Contato
+  whatsappNumber: "5535999260177",
 
+  // UI
+  whatsappFloatShowAfterPx: 520,
   enableRevealAnimations: true,
-  revealStaggerMs: 70,                      // animação “em cascata”
+  revealStaggerMs: 70,
   enableFaqAccordion: true,
 
-  // Texto discreto para incentivar reserva direta
-  directBookingHintShort: "Reserva direta com a StayMais pode incluir brinde ou desconto (conforme disponibilidade).",
+  // Dados (JSON externo)
+  propertiesJsonUrl: "/properties.json", // use "/properties.json" para funcionar em qualquer pasta
 
-  //leads
+  // Google Sheets (Web App do Apps Script)
   googleSheetsWebhook: "https://script.google.com/macros/s/AKfycbzApu0HECitmFp6f65LSQ8sEM6JT63uxyaNqDJ7MoEBG3tHKh_HRddAVY-leG4sSS8Q/exec",
-  googleSheetsToken: "AKfycbzApu0HECitmFp6f65LSQ8sEM6JT63uxyaNqDJ7MoEBG3tHKh_HRddAVY-leG4sSS8Q",
+  googleSheetsToken: "STAYMAIS_TOKEN_SUPER_SECRETO_AKfycbzApu0HECitmFp6f65LSQ8sEM6JT63uxyaNqDJ7MoEBG3tHKh_HRddAVY-leG4sSS8Q",
 
+
+  // Mensagem discreta de incentivo à reserva direta
+  directBookingHintShort:
+    "Reserva direta com a StayMais pode incluir brinde ou desconto (conforme disponibilidade).",
+
+  // Segurança/anti-spam (client-side)
+  enableHoneypot: true,           // exige input hidden name="hp" nos forms
+  blockDoubleSubmit: true,        // trava clique duplo
+  sheetsTimeoutMs: 2500           // timeout do POST pro Sheets
 };
 
-/* =========================================================
-   2) DADOS DOS IMÓVEIS (edite aqui)
-   =========================================================
-   Dica:
-   - fotos: coloque URLs reais (pode ser do seu próprio site depois)
-   - badges: use termos curtos
-   - rules: frases curtas e claras
-   - airbnbUrl: mantém “Ver no Airbnb”
-   ========================================================= */
-const PROPERTIES = {
-  imovel1: {
-    name: "Imóvel 1",
-    city: "Campos do Jordão",
-    area: "capivari",
-    areaLabel: "Capivari",
-    airbnbUrl: "https://www.airbnb.com.br/rooms/1489778972017530668",
-    badges: [
-      { text: "Mais reservado", hot: true },
-      { text: "Vista" },
-      { text: "Conforto" },
-    ],
-    rules: [
-      "Check-in: a combinar",
-      "Check-out: a combinar",
-      "Pet: consultar",
-      "Vaga: consultar",
-      "Silêncio: após 22h",
-    ],
-    description:
-      "Hospedagem com foco em conforto e praticidade, ideal para casais ou pequenas famílias.",
-    photos: [
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=60",
-      "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=1600&q=60",
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1600&q=60",
-    ],
-  },
-
-  imovel2: {
-    name: "Imóvel 2",
-    city: "Campos do Jordão",
-    area: "alto-da-boa-vista",
-    areaLabel: "Alto da Boa Vista",
-    airbnbUrl: "https://www.airbnb.com.br/rooms/1366703907415936831",
-    badges: [
-      { text: "Lareira" },
-      { text: "Família" },
-      { text: "Tranquilo" },
-    ],
-    rules: [
-      "Check-in: a combinar",
-      "Check-out: a combinar",
-      "Pet: não permitido",
-      "Vaga: 1 vaga",
-      "Sem festas",
-    ],
-    description:
-      "Ambiente espaçoso, com estrutura completa para estadias confortáveis em qualquer época do ano.",
-    photos: [
-      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1600&q=60",
-      "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1600&q=60",
-      "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1600&q=60",
-    ],
-  },
-
-  imovel3: {
-    name: "Imóvel 3",
-    city: "Campos do Jordão",
-    area: "vila-inglesa",
-    areaLabel: "Vila Inglesa",
-    airbnbUrl: "https://www.airbnb.com.br/rooms/1441574411572251909",
-    badges: [
-      { text: "Casal" },
-      { text: "Aconchegante" },
-      { text: "Localização" },
-    ],
-    rules: [
-      "Check-in: a combinar",
-      "Check-out: a combinar",
-      "Pet: consultar",
-      "Vaga: consultar",
-      "Proibido fumar",
-    ],
-    description:
-      "Opção perfeita para quem quer tranquilidade, conforto e fácil acesso às principais regiões.",
-    photos: [
-      "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1600&q=60",
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=60",
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1600&q=60",
-    ],
-  },
-};
 
 /* =========================================================
-   Helpers (não mexer)
+   2) HELPERS (não mexer)
    ========================================================= */
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
-async function sendToSheets(type, data) {
-  try {
-    if (!SITE_CONFIG.googleSheetsWebhook) return { ok: false, skipped: true };
-
-    const payload = {
-      token: SITE_CONFIG.googleSheetsToken,
-      type,
-      data,
-      meta: {
-        origem: location.href,
-        userAgent: navigator.userAgent
-      }
-    };
-
-    const res = await fetch(SITE_CONFIG.googleSheetsWebhook, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    const json = await res.json().catch(() => ({}));
-    return json;
-  } catch (e) {
-    console.error("Erro ao enviar para Sheets:", e);
-    return { ok: false, error: String(e) };
-  }
-}
 
 function openWhatsApp(message) {
   const url = `https://wa.me/${SITE_CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
@@ -157,7 +59,7 @@ function openWhatsApp(message) {
 }
 
 function formatAreaLabel(area) {
-  return area.replaceAll("-", " ");
+  return (area || "").toString().replaceAll("-", " ");
 }
 
 function calcNights(checkin, checkout) {
@@ -169,7 +71,42 @@ function calcNights(checkin, checkout) {
 }
 
 /* =========================================================
-   Menu mobile
+   3) REVEAL ANIMATIONS (funciona com conteúdo dinâmico)
+   ---------------------------------------------------------
+   - Elementos com classe .reveal começam "apagados" no CSS
+   - Quando entram na tela: adiciona .show
+   - Chamamos initReveal() novamente após renderizar via JS
+   ========================================================= */
+let _revealObserver = null;
+
+function initReveal(scope = document) {
+  if (!SITE_CONFIG.enableRevealAnimations) return;
+
+  const revealEls = scope.querySelectorAll(".reveal:not(.show)");
+  if (!revealEls.length) return;
+
+  // Cria 1 observer e reutiliza (performance)
+  if (!_revealObserver) {
+    _revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+          _revealObserver.unobserve(entry.target); // evita reprocessar
+        }
+      });
+    }, { threshold: 0.12 });
+  }
+
+  // Efeito em cascata (stagger)
+  revealEls.forEach((el, i) => {
+    el.style.transitionDelay = `${Math.min(i * (SITE_CONFIG.revealStaggerMs || 70), 420)}ms`;
+    _revealObserver.observe(el);
+  });
+}
+
+
+/* =========================================================
+   4) MENU MOBILE
    ========================================================= */
 (() => {
   const burger = $("#burger");
@@ -181,7 +118,7 @@ function calcNights(checkin, checkout) {
     burger.setAttribute("aria-expanded", isOpen ? "true" : "false");
   });
 
-  links.querySelectorAll("a").forEach(a => {
+  links.querySelectorAll("a").forEach((a) => {
     a.addEventListener("click", () => {
       links.classList.remove("open");
       burger.setAttribute("aria-expanded", "false");
@@ -189,80 +126,66 @@ function calcNights(checkin, checkout) {
   });
 })();
 
-/* =========================================================
-   Reveal animations (suave + em cascata)
-   ========================================================= */
-(() => {
-  if (!SITE_CONFIG.enableRevealAnimations) return;
-  const revealEls = $$(".reveal");
-  if (!revealEls.length) return;
-
-  revealEls.forEach((el, i) => {
-    el.style.transitionDelay = `${Math.min(i * SITE_CONFIG.revealStaggerMs, 420)}ms`;
-  });
-
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add("show");
-    });
-  }, { threshold: 0.12 });
-
-  revealEls.forEach(el => io.observe(el));
-})();
 
 /* =========================================================
-   FAQ accordion
+   5) FAQ ACCORDION
    ========================================================= */
 (() => {
   if (!SITE_CONFIG.enableFaqAccordion) return;
   const btns = $$(".faq-q");
   if (!btns.length) return;
 
-  btns.forEach(btn => {
+  btns.forEach((btn) => {
     btn.addEventListener("click", () => {
       const item = btn.closest(".faq-item");
       if (!item) return;
 
       const open = item.classList.contains("open");
-      $$(".faq-item.open").forEach(i => i.classList.remove("open"));
+      $$(".faq-item.open").forEach((i) => i.classList.remove("open"));
       if (!open) item.classList.add("open");
     });
   });
 })();
 
+
 /* =========================================================
-   WhatsApp float
+   6) WHATSAPP FLOAT
    ========================================================= */
 (() => {
   const floatBtn = $("#whatsFloat");
   if (!floatBtn) return;
 
+  // garante o número correto no botão flutuante
   floatBtn.setAttribute("href", `https://wa.me/${SITE_CONFIG.whatsappNumber}`);
 
   function toggleFloat() {
     floatBtn.classList.toggle("show", window.scrollY > SITE_CONFIG.whatsappFloatShowAfterPx);
   }
+
   window.addEventListener("scroll", toggleFloat, { passive: true });
   toggleFloat();
 })();
 
+
 /* =========================================================
-   Galerias (slider) - inicializador genérico
-   =========================================================
-   Como usar no HTML:
-   - Container: <div class="gallery" data-gallery>
-   - Track: <div class="gallery-track"> ...slides... </div>
-   - Botões: .gallery-btn.prev / .gallery-btn.next
-   - Dots: .gallery-dots com filhos .dot
+   7) GALERIAS (slider leve, sem biblioteca)
+   ---------------------------------------------------------
+   Estrutura esperada:
+   - container: [data-gallery]
+   - track: .gallery-track
+   - slides: .gallery-slide
+   - botões: .gallery-btn.prev / .gallery-btn.next
+   - dots: .dot
    ========================================================= */
-function initGalleries(scope=document) {
+function initGalleries(scope = document) {
   const galleries = scope.querySelectorAll("[data-gallery]");
-  galleries.forEach(gallery => {
+  galleries.forEach((gallery) => {
     const track = gallery.querySelector(".gallery-track");
     const slides = gallery.querySelectorAll(".gallery-slide");
     const prev = gallery.querySelector(".gallery-btn.prev");
     const next = gallery.querySelector(".gallery-btn.next");
     const dots = gallery.querySelectorAll(".dot");
+
     if (!track || slides.length <= 1) return;
 
     let index = 0;
@@ -296,33 +219,120 @@ function initGalleries(scope=document) {
   });
 }
 
+
 /* =========================================================
-   PORTFÓLIO - render automático dos cards
-   =========================================================
+   8) GOOGLE SHEETS - envio seguro (timeout + keepalive)
+   ---------------------------------------------------------
+   Requer:
+   - Web App do Apps Script publicado
+   - TOKEN igual no site e no Apps Script
+   - Apps Script com allowlist/rate-limit/honeypot
+   ========================================================= */
+async function sendToSheets(type, data) {
+  try {
+    if (!SITE_CONFIG.googleSheetsWebhook) return { ok: false, skipped: true };
+
+    // Honeypot: se vier preenchido, nem tenta enviar (provável bot)
+    if (SITE_CONFIG.enableHoneypot && data && typeof data.hp === "string" && data.hp.trim() !== "") {
+      console.warn("Honeypot preenchido - possível bot. Bloqueando envio.");
+      return { ok: false, error: "spam" };
+    }
+
+    const payload = {
+      token: SITE_CONFIG.googleSheetsToken,
+      type,
+      data,
+      meta: {
+        origem: location.origin,
+        path: location.pathname,
+        userAgent: navigator.userAgent,
+        ts: Date.now()
+      }
+    };
+
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), SITE_CONFIG.sheetsTimeoutMs || 2500);
+
+    const res = await fetch(SITE_CONFIG.googleSheetsWebhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true,
+      signal: controller.signal
+    });
+
+    clearTimeout(t);
+
+    const json = await res.json().catch(() => ({}));
+    return json;
+
+  } catch (e) {
+    console.error("Erro ao enviar para Sheets:", e);
+    return { ok: false, error: String(e) };
+  }
+}
+
+
+/* =========================================================
+   9) CARREGAR PROPERTIES.JSON (fonte única de imóveis)
+   ========================================================= */
+async function loadProperties() {
+  try {
+    const url = new URL(SITE_CONFIG.propertiesJsonUrl, document.baseURI).toString();
+    console.log("📦 Carregando JSON em:", url);
+
+    const res = await fetch(url, { cache: "no-store" });
+    console.log("📡 Status JSON:", res.status);
+
+    if (!res.ok) throw new Error(`Falha ao carregar JSON: ${res.status}`);
+
+    const data = await res.json();
+    console.log("✅ JSON carregado. Total de imóveis:", Object.keys(data || {}).length);
+
+    if (!data || typeof data !== "object") throw new Error("JSON inválido (não é objeto).");
+
+    return data;
+  } catch (err) {
+    console.error("❌ Erro ao carregar properties.json:", err);
+    return null;
+  }
+}
+
+
+/* =========================================================
+   10) PORTFÓLIO - render automático dos cards
+   ---------------------------------------------------------
    Necessário no portfolio.html:
    - <div id="propertiesList"></div>
    ========================================================= */
-(() => {
+function renderPortfolio(PROPERTIES) {
   const list = $("#propertiesList");
   if (!list) return;
 
-  // Renderiza todos os imóveis
+  const ids = Object.keys(PROPERTIES || {});
+  if (!ids.length) {
+    list.innerHTML = `<p class="sub">Nenhum imóvel disponível no momento.</p>`;
+    return;
+  }
+
   const html = Object.entries(PROPERTIES).map(([id, p]) => {
-    const dots = p.photos.map((_, i) => `<span class="dot ${i===0 ? "active":""}"></span>`).join("");
-    const slides = p.photos.map((src, i) => `
+    const photos = Array.isArray(p.photos) ? p.photos : [];
+
+    const dots = photos.map((_, i) => `<span class="dot ${i === 0 ? "active" : ""}"></span>`).join("");
+    const slides = photos.map((src, i) => `
       <div class="gallery-slide">
-        <img src="${src}" alt="${p.name} - foto ${i+1}" loading="lazy" decoding="async">
+        <img src="${src}" alt="${p.name || "Hospedagem"} - foto ${i + 1}" loading="lazy" decoding="async">
       </div>
     `).join("");
 
     const badges = (p.badges || []).map(b =>
-      `<span class="badge-mini ${b.hot ? "hot":""}">${b.text}</span>`
+      `<span class="badge-mini ${b.hot ? "hot" : ""}">${b.text}</span>`
     ).join("");
 
     const rules = (p.rules || []).map(r => `<li>${r}</li>`).join("");
 
     return `
-      <article class="prop reveal" data-name="${p.name}" data-city="${p.city}" data-area="${p.area}">
+      <article class="prop reveal" data-name="${(p.name || "")}" data-city="${(p.city || "")}" data-area="${(p.area || "")}">
         <div class="gallery" data-gallery>
           <div class="gallery-track">${slides}</div>
 
@@ -333,23 +343,22 @@ function initGalleries(scope=document) {
         </div>
 
         <div class="prop-body">
-          <h3 class="prop-title">${p.name}</h3>
-          <p class="prop-meta">${p.city} • ${p.areaLabel || formatAreaLabel(p.area)}</p>
+          <h3 class="prop-title">${p.name || "Hospedagem"}</h3>
+          <p class="prop-meta">${p.city || ""} • ${(p.areaLabel || formatAreaLabel(p.area) || "")}</p>
 
           <div class="badge-set">${badges}</div>
 
-          <p class="prop-desc">${p.description}</p>
+          <p class="prop-desc">${p.description || ""}</p>
 
           <div class="rules">
             <h4>Regras e informações</h4>
             <ul>${rules}</ul>
           </div>
 
-          <!-- Incentivo discreto (não “grita”, mas vende) -->
           <div class="book-hint">${SITE_CONFIG.directBookingHintShort}</div>
 
           <div class="prop-actions">
-            <a class="btn" target="_blank" href="${p.airbnbUrl}">Ver no Airbnb</a>
+            <a class="btn" target="_blank" href="${p.airbnbUrl || "#"}">Ver no Airbnb</a>
             <a class="btn orange" href="reserva.html?id=${encodeURIComponent(id)}">Reservar direto</a>
           </div>
 
@@ -363,23 +372,15 @@ function initGalleries(scope=document) {
       </article>
     `;
   }).join("");
-  // depois de preencher o HTML dos cards:
-  requestAnimationFrame(() => {
-    document.querySelectorAll("#propertiesList .reveal")
-      .forEach(el => el.classList.add("show"));
-  });
 
-  document.querySelectorAll(".reveal").forEach(el => {
-  el.style.opacity = 1;
-  el.style.transform = "none";
-});
-
+  // Renderiza
   list.innerHTML = html;
 
-  // Liga slider nas galerias do portfólio
-  initGalleries(document);
+  // Ativa sliders e animações só dentro do container recém-criado
+  initGalleries(list);
+  initReveal(list);
 
-  // Filtro + busca
+  // Busca e filtro (se existir)
   const chips = $$(".chip");
   const searchInput = $("#propSearch");
   const props = $$(".prop");
@@ -411,42 +412,47 @@ function initGalleries(scope=document) {
 
   searchInput?.addEventListener("input", applyFilters);
   applyFilters();
-})();
+}
+
 
 /* =========================================================
-   RESERVA - render da página com base em ?id=
+   11) RESERVA - render por ?id=
+   ---------------------------------------------------------
+   Necessário no reserva.html:
+   - #reserveTitle
+   - #reserveGalleryHost
+   - #reserveForm
+   - #checkin #checkout #nightsCount
    ========================================================= */
-(() => {
+function renderReserva(PROPERTIES) {
   const titleEl = $("#reserveTitle");
   const galleryHost = $("#reserveGalleryHost");
   const form = $("#reserveForm");
-
   if (!titleEl || !galleryHost || !form) return;
 
   const params = new URLSearchParams(location.search);
   const id = params.get("id");
+  const p = id ? PROPERTIES?.[id] : null;
 
-  const p = id ? PROPERTIES[id] : null;
   if (!p) {
     titleEl.textContent = "Reserva";
     galleryHost.innerHTML = `<p class="sub">Imóvel não encontrado. Volte ao portfólio e tente novamente.</p>`;
     return;
   }
 
-  // Título
-  titleEl.textContent = p.name;
+  titleEl.textContent = p.name || "Reserva";
 
-  // Galeria (fotos do imóvel selecionado)
-  const slides = p.photos.map((src, i) => `
+  // Galeria do imóvel selecionado
+  const photos = Array.isArray(p.photos) ? p.photos : [];
+  const slides = photos.map((src, i) => `
     <div class="gallery-slide">
-      <img src="${src}" alt="${p.name} - foto ${i+1}" loading="lazy" decoding="async">
+      <img src="${src}" alt="${p.name || "Hospedagem"} - foto ${i + 1}" loading="lazy" decoding="async">
     </div>
   `).join("");
-
-  const dots = p.photos.map((_, i) => `<span class="dot ${i===0 ? "active":""}"></span>`).join("");
+  const dots = photos.map((_, i) => `<span class="dot ${i === 0 ? "active" : ""}"></span>`).join("");
 
   galleryHost.innerHTML = `
-    <div class="gallery reserve-gallery" data-gallery>
+    <div class="gallery reserve-gallery reveal" data-gallery>
       <div class="gallery-track">${slides}</div>
       <button class="gallery-btn prev" aria-label="Foto anterior">‹</button>
       <button class="gallery-btn next" aria-label="Próxima foto">›</button>
@@ -457,26 +463,37 @@ function initGalleries(scope=document) {
     </div>
   `;
 
-  initGalleries(document);
+  initGalleries(galleryHost);
+  initReveal(galleryHost);
 
-  // Elementos de data/diárias
+  // Campos de data/diárias
   const inEl = $("#checkin");
   const outEl = $("#checkout");
   const nightsEl = $("#nightsCount");
 
   function updateNights() {
-    const n = calcNights(inEl.value, outEl.value);
-    nightsEl.textContent = n > 0 ? `${n} diária${n>1?"s":""}` : "Selecione as datas";
+    const n = calcNights(inEl?.value, outEl?.value);
+    if (nightsEl) nightsEl.textContent = n > 0 ? `${n} diária${n > 1 ? "s" : ""}` : "Selecione as datas";
   }
 
   inEl?.addEventListener("change", updateNights);
   outEl?.addEventListener("change", updateNights);
 
-  // Envio: abre WhatsApp
-  form.addEventListener("submit", (e) => {
+  // Submit da reserva: salva no Sheets, abre Whats, redireciona
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    // Bloqueia clique duplo
+    const btn = form.querySelector('button[type="submit"]');
+    if (SITE_CONFIG.blockDoubleSubmit && btn) {
+      btn.disabled = true;
+      btn.textContent = "Enviando…";
+    }
+
     const fd = new FormData(form);
+
+    // Honeypot (campo escondido)
+    const hp = (fd.get("hp") || "").toString();
 
     const nome     = (fd.get("Nome") || "").toString().trim();
     const telefone = (fd.get("Telefone") || "").toString().trim();
@@ -488,6 +505,7 @@ function initGalleries(scope=document) {
     const nights = calcNights(checkin, checkout);
     if (checkin && checkout && nights <= 0) {
       alert("Check-out precisa ser depois do Check-in.");
+      if (btn) { btn.disabled = false; btn.textContent = "Solicitar reserva"; }
       return;
     }
 
@@ -496,7 +514,7 @@ function initGalleries(scope=document) {
 
 Quero reservar diretamente com a StayMais.
 
-• Imóvel: ${p.name}
+• Imóvel: ${p.name || "-"}
 • Nome: ${nome}
 • Telefone/WhatsApp: ${telefone}
 • E-mail: ${email}
@@ -508,42 +526,61 @@ Quero reservar diretamente com a StayMais.
 Obs: Tenho interesse na reserva direta (possível brinde/desconto, conforme disponibilidade).
 
 Pode me confirmar disponibilidade e valores, por favor?`;
-sessionStorage.setItem("staymais_last_reserve_msg", msg);
-sendToSheets("reserva", {
-  imovelId: id,
-  imovelNome: p.name,
-  nome,
-  telefone,
-  email,
-  hospedes,
-  checkin,
-  checkout,
-  diarias: nights > 0 ? nights : ""
-});
 
+    // Salva mensagem para o botão "Abrir WhatsApp" na página de obrigado
+    sessionStorage.setItem("staymais_last_reserve_msg", msg);
+
+    // Salva no Google Sheets (não bloqueia conversão, mas tenta com robustez)
+    await sendToSheets("reserva", {
+      hp,
+      imovelId: id,
+      imovelNome: p.name || "",
+      nome,
+      telefone,
+      email,
+      hospedes,
+      checkin,
+      checkout,
+      diarias: nights > 0 ? String(nights) : ""
+    });
+
+    // Converte: abre WhatsApp
     openWhatsApp(msg);
-    setTimeout(() => {
-  window.location.href = "obrigado-reserva.html";
-}, 900);
 
+    // Redireciona para a página de agradecimento
+    setTimeout(() => {
+      window.location.href = "obrigado-reserva.html";
+    }, 900);
   });
 
   updateNights();
-})();
+}
+
 
 /* =========================================================
-   FORM AVALIAÇÃO (FormSubmit) - envia e-mail + abre WhatsApp
+   12) FORM AVALIAÇÃO (salva no Sheets + abre WhatsApp)
+   ---------------------------------------------------------
+   Necessário no formulario.html:
+   - <form id="leadForm"> ... </form>
+   - (opcional) <div id="leadMsg"></div>
+   - (recomendado) input honeypot name="hp"
    ========================================================= */
-(() => {
+function bindLeadForm() {
   const form = $("#leadForm");
-  const msgEl = $("#leadMsg");
   if (!form) return;
 
-  form.addEventListener("submit", () => {
-    form.setAttribute("method", "POST");
-    form.setAttribute("action", "https://formsubmit.co/staymaisreservas@gmail.com");
+  form.addEventListener("submit", async () => {
+    // Bloqueia clique duplo
+    const btn = form.querySelector('button[type="submit"]');
+    if (SITE_CONFIG.blockDoubleSubmit && btn) {
+      btn.disabled = true;
+      btn.textContent = "Enviando…";
+    }
 
     const fd = new FormData(form);
+
+    // Honeypot
+    const hp = (fd.get("hp") || "").toString();
 
     const nome = (fd.get("Nome") || "").toString().trim();
     const whatsCliente = (fd.get("WhatsApp") || "").toString().trim();
@@ -571,19 +608,58 @@ Gostaria de solicitar uma avaliação do meu imóvel para gestão com a StayMais
 • Observações: ${obs || "-"}
 
 Obrigado(a)!`;
-sendToSheets("avaliacao", {
-  nome,
-  whatsapp: whatsCliente,
-  cidade,
-  bairro,
-  tipo,
-  quartos,
-  statusAirbnb: status,
-  linkAnuncio: link,
-  observacoes: obs
-});
 
+    // Salva no Sheets (lead interno)
+    await sendToSheets("avaliacao", {
+      hp,
+      nome,
+      whatsapp: whatsCliente,
+      cidade,
+      bairro,
+      tipo,
+      quartos,
+      statusAirbnb: status,
+      linkAnuncio: link,
+      observacoes: obs
+    });
+
+    // Abre WhatsApp com mensagem pronta
     openWhatsApp(waMsg);
-    if (msgEl) msgEl.textContent = "Enviando por e-mail e abrindo WhatsApp com a mensagem pronta…";
+
+    const msgEl = $("#leadMsg");
+    if (msgEl) msgEl.textContent = "Solicitação registrada. Abrindo WhatsApp com a mensagem pronta…";
+
+    // (Opcional) Se você ainda usa FormSubmit para e-mail:
+    // - deixe o action/method no HTML
+    // - aqui NÃO damos preventDefault, então o e-mail seguirá
   });
+}
+
+
+/* =========================================================
+   13) BOOTSTRAP (inicialização geral)
+   ---------------------------------------------------------
+   - initReveal do conteúdo inicial
+   - bind do formulário
+   - carrega JSON e renderiza páginas que existirem
+   ========================================================= */
+(async () => {
+  initReveal(document);
+  bindLeadForm();
+
+  const PROPERTIES = await loadProperties();
+
+  // Se falhar, não quebra o site inteiro — só mostra mensagem amigável
+  if (!PROPERTIES) {
+    const list = $("#propertiesList");
+    if (list) list.innerHTML = `<p class="sub">Não foi possível carregar os imóveis agora. Tente novamente em instantes.</p>`;
+
+    const host = $("#reserveGalleryHost");
+    if (host) host.innerHTML = `<p class="sub">Não foi possível carregar os dados do imóvel. Volte ao portfólio e tente novamente.</p>`;
+    return;
+  }
+
+  // Renderiza onde fizer sentido (as funções já checam se os IDs existem)
+  renderPortfolio(PROPERTIES);
+  renderReserva(PROPERTIES);
 })();
