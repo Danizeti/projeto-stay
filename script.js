@@ -278,7 +278,7 @@ async function sendToSheets(type, data) {
    ========================================================= */
 async function loadProperties() {
   try {
-    const url = new URL(SITE_CONFIG.propertiesJsonUrl, document.baseURI).toString();
+    const url = new URL("properties.json", window.location.href).toString();
     console.log("📦 Carregando JSON em:", url);
 
     const res = await fetch(url, { cache: "no-store" });
